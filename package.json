@@ -1,0 +1,28 @@
+{
+  "name": "president.io",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AlexandreVolts/president.io.git"
+  },
+  "author": "Alexandre Cochet",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AlexandreVolts/president.io/issues"
+  },
+  "homepage": "https://github.com/AlexandreVolts/president.io#readme",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "express": "^4.16.3",
+    "socketio": "^1.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^1.18.3"
+  }
+}
