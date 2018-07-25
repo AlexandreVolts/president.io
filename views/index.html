@@ -3,6 +3,7 @@
 	<head>
 		<title></title>
 		<meta charset="utf-8" />
+		<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
 	</head>
 	<body>
 		<header>
@@ -10,8 +11,8 @@
 		</header>
 		<section>
 			<form method="post" action="/create">
-				<input type="text" name="name" placeholder="Nom de la salle" />
-				<input type="password" name="password" placeholder="Mot de passe (optionel)" />
+				<input type="text" name="name" placeholder="Nom de la salle" minlength="2" required />
+				<input type="password" name="password" placeholder="Mot de passe (optionel)" minlength="2" />
 				<input type="submit" value="Créer" />
 			</form>
 		</section>

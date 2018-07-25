@@ -5,6 +5,10 @@ var Room = function(name, password = undefined)
 	let users = [];
 	this.name = name;
 
+	this.addUser = function(socket)
+	{
+		users.push(socket);
+	}
 	this.getPassword = function()
 	{
 		return (PASSWORD);
