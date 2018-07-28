@@ -32,15 +32,18 @@ var SocketManager = function(server, game)
 		else {
 			output.valid = true;
 			socket.pseudo = datas.pseudo;
-			console.log("User " + socket.pseudo + " has join the room " + room.name + ".");
+			socket.room = room.name;
 			room.addUser(socket);
 		}
 		socket.emit("Login:send_status", output);
 	}
 	var onDisconnect = function(socket)
 	{
-		let name = 
-		console.log("User " + (socket.pseudo || socket.id) + " has disconnected.");
+		let name = (socket.pseudo || socket.id);
+		let room = game.getRoom(socket.room);
+
+		if (room != undefined)
+			room.removeUser(socket);
 	}
 }
 module.exports = SocketManager;

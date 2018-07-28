@@ -15,8 +15,6 @@ var Form = function(socket)
 		var output = {};
 		var index = url.indexOf(URL_SEPARATOR) + URL_SEPARATOR.length;
 
-		if (index < 0)
-			index = 0;
 		output.pseudo = inputs[0].value;
 		output.password = inputs[1].value;
 		output.roomName = url.substr(index, url.length);
