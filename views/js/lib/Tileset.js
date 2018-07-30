@@ -22,6 +22,10 @@ var Tileset = function(src, nbTilesX, nbTilesY)
 		self.position.x, self.position.y,
 		size.x, size.y);
 	}
+	this.getTileSize = function()
+	{
+		return (size);
+	}
 	this.setTileSize = function(newsize)
 	{
 		if (newsize.x == undefined || newsize.y == undefined)

@@ -5,5 +5,4 @@ var Card = function(name, value, strength, color)
 	this.strength = strength;
 	this.color = color;
 }
-
 module.exports = Card;

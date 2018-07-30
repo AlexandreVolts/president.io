@@ -12,7 +12,6 @@ function rand(max)
 var Deck = function()
 {
 	let cards = [];
-	let discards = [];
 	
 	this.generate = function()
 	{
@@ -38,7 +37,16 @@ var Deck = function()
 			cards[j] = cards[i];
 			cards[i] = swap;
 		}
-		console.log(cards);
+	}
+	this.distribute = function(nbPlayers)
+	{
+		let output = new Array(nbPlayers);
+
+		for (let i = 0; i < nbPlayers; i++)
+			output[i] = [];
+		for (let i = 0; cards.length > 0; i++)
+			output[i % nbPlayers].push(cards.shift());
+		return (output);
 	}
 }
 module.exports = Deck;
