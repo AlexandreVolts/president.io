@@ -8,20 +8,24 @@ var Game = function(canvas, socket)
 	var tileSize = cardsTileset.getTileSize();
 	
 	this.hand = [];
-	tileSize.x *= 25;
-	tileSize.y *= 40;
+	tileSize.x *= 12.5;
+	tileSize.y *= 20;
 	cardsTileset.setTileSize(tileSize);
 	
 	var renderHand = function()
 	{
-		cardsTileset.draw(context, 1, 1);
-		for (var i = 0, l = self.hand.length; i < l; i++) {
-			cardsTileset.position.x = i * tileSize.x;
-			cardsTileset.draw(context, self.hand[i].value, 0);
+		var position = new Vector2D(0, 0);
+		
+		position.y = canvas.height - SYS.PADDING - tileSize.y;
+		for (var i = 0, len = self.hand.length; i < len; i++) {
+			position.x = SYS.PADDING + (canvas.width / len) * i;
+			cardsTileset.position = position;
+			cardsTileset.draw(context, self.hand[i].value, self.hand[i].color.id);
 		}
 	}
 	this.render = function()
 	{
+		context.clearRect(0, 0, canvas.width, canvas.height);
 		renderHand();
 		window.requestAnimationFrame(self.render);
 	}

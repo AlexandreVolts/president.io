@@ -11,18 +11,19 @@ var Room = function(name, password = undefined)
 	
 	this.name = name;
 
-	deck.generate();
-	deck.shuffle(0.9);
-	
+	deck.generate(); //!!!
+	deck.shuffle(0.9); //!!!
 	var startGame = function()
 	{
-		let hands = deck.distribute(players.length);
+		let hands;
 		let output = {};
-		
+
+		deck.generate();
+		deck.shuffle(0.9);
+		hands = deck.distribute(players.length);
 		for (let i = 0, l = hands.length; i < l; i++) {
 			players[i].hand = hands[i];
 			output.hand = hands[i];
-			console.log(hands[i]);
 			players[i].emit("Game:send_hand", output);
 		}
 		gameStarted = true;
@@ -40,6 +41,7 @@ var Room = function(name, password = undefined)
 		let output = {pseudo: socket.pseudo};
 		
 		if (!gameStarted) {
+			socket.emit("Game:send_hand", {hand: deck.distribute(4)[0]}); //!!!
 			players.push(socket);
 			if (players.length >= 4)
 				startGame();

@@ -2,7 +2,7 @@ const Card = require("./Card.js");
 const NAMES = ["As", "Two", "Three", "Four", "Five",
 				"Six", "Seven", "Eight", "Nine", "Ten",
 				"Jockey", "Queen", "King"];
-const COLORS = ["Heart", "Diamond", "Club", "Spade"];
+const COLORS = ["Spade", "Club", "Diamond", "Heart"];
 
 function rand(max)
 {
@@ -22,7 +22,7 @@ var Deck = function()
 				strength = i - 2;
 				if (strength < 0)
 					strength += NAMES.length;
-				cards.push(new Card(NAMES[i], i, strength, COLORS[j]));
+				cards.push(new Card(NAMES[i], i, strength, {name: COLORS[j], id: j}));
 			}
 		}
 	}
