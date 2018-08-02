@@ -31,7 +31,7 @@ var Deck = function()
 		let j;
 		let swap;
 		
-		for (let i = 0, l = cards.length * degree; i < l; i++) {
+		for (let i = 0, len = cards.length * degree; i < len; i++) {
 			j = rand(cards.length);
 			swap = cards[j];
 			cards[j] = cards[i];

@@ -10,8 +10,8 @@ var SocketManager = function(socket, game)
 	{
 		var cardMin;
 		var index;
-		
-		game.hand = [];
+		var hand = [];
+
 		for (var i = 0, len = datas.hand.length; i < len; i++) {
 			cardMin = datas.hand[0];
 			index = 0;
@@ -21,9 +21,10 @@ var SocketManager = function(socket, game)
 					index = j;
 				}
 			}
-			game.hand.push(cardMin);
+			hand.push(cardMin);
 			datas.hand.splice(index, 1);
 		}
+		game.setHand(hand);
 	}
 	
 	this.getPlayersNumber = function()

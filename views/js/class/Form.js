@@ -1,14 +1,15 @@
 var Form = function(socket)
 {
-	var container = document.getElementsByTagName("section")[0];
-	var canvas = container.getElementsByTagName("canvas")[0];
-	var form = container.getElementsByTagName("form")[0];
+	var header = document.getElementsByTagName("header")[0];
+	var section = document.getElementsByTagName("section")[0];
+	var canvas = section.getElementsByTagName("canvas")[0];
+	var form = header.getElementsByTagName("form")[0];
 	var inputs = form.getElementsByTagName("input");
 	var button = form.getElementsByTagName("button")[0];
 	var errorText = document.getElementById("loginError");
 	var url = window.location.href;
 
-	container.removeChild(canvas);
+	section.removeChild(canvas);
 	var sendLoginInfos = function()
 	{
 		const URL_SEPARATOR = "room/";
@@ -26,9 +27,9 @@ var Form = function(socket)
 			errorText.textContent = datas.message;
 			return;
 		}
-		container.removeChild(errorText);
-		container.removeChild(form);
-		container.appendChild(canvas);
+		header.removeChild(errorText);
+		header.removeChild(form);
+		section.appendChild(canvas);
 	}
 	button.addEventListener("click", sendLoginInfos);
 	socket.on("Login:send_status", getLoginStatus);

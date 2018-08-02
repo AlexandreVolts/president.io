@@ -1,13 +1,12 @@
-let http = require("http");
-let path = require("path");
-let express = require("express");
-let bodyParser = require("body-parser");
-let SocketManager = require("./class/SocketManager.js")
-let Game = require("./class/Game.js");
+const path = require("path");
+const express = require("express");
+const bodyParser = require("body-parser");
+const SocketManager = require("./class/SocketManager.js")
+const Game = require("./class/Game.js");
 
 var Server = function(port)
 {
-	const DIR = "/../views/";
+	const DIR = __dirname + "/../views/";
 	let app = express();
 	let game = new Game();
 	let server = app.listen(port, function()
@@ -22,7 +21,7 @@ var Server = function(port)
 		app.use(express.static("views"));
 		app.get("/", function(req, res)
 		{
-			res.sendFile(path.resolve(__dirname + DIR + "index.html"));
+			res.sendFile(path.resolve(DIR + "index.html"));
 		});
 		app.get("/room/:name", manageUserInRoom);
 		app.post("/create", manageRoomCreation);
@@ -34,9 +33,8 @@ var Server = function(port)
 	}
 	var manageRoomCreation = function(req, res)
 	{
-		if (game.addRoom(req.body)) {
+		if (game.addRoom(req.body))
 			res.redirect("/room/" + req.body.name);
-		}
 		else
 			res.redirect("/");
 	}
@@ -45,10 +43,9 @@ var Server = function(port)
 		let room = game.getRoom(req.params.name);
 		
 		if (room != undefined)
-			res.sendFile(path.resolve(__dirname + DIR + "game.html"));
+			res.sendFile(path.resolve(DIR + "game.html"));
 		else
 			res.redirect("/");
 	}
 }
-
 module.exports = Server;

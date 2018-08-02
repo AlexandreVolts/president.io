@@ -1,4 +1,4 @@
-let Room = require("./Room.js");
+const Room = require("./Room.js");
 
 var Game = function()
 {
