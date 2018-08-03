@@ -8,7 +8,6 @@ var Hand = function(canvas)
 	var cardSize = cardsTileset.getTileSize();
 	var mousePosition = new Vector2D(0, 0);
 	var mouseClicked = false;
-	var rect = {};
 	var selected = [];
 	var delay = new Clock();
 	
@@ -17,8 +16,6 @@ var Hand = function(canvas)
 	cardSize.x *= 12.5;
 	cardSize.y *= 20;
 	cardsTileset.setTileSize(cardSize);
-	rect.width = cardSize.x * 4;
-	rect.height = cardSize.y;
 
 	var manageMouseClick = function(event)
 	{
@@ -42,9 +39,13 @@ var Hand = function(canvas)
 	var pushCards = function(adder, substractor, index, additionalConditions = true)
 	{
 		var time = delay.getElapsedTime();
+		var card;
+		var i = 0;
 
 		if (mouseClicked && time > CLICK_DELAY && additionalConditions) {
-			adder.push(substractor.splice(index, 1)[0]);
+			card = substractor.splice(index, 1)[0];
+			for (; i < adder.length && card.strength > adder[i].strength; i++);
+			adder.splice(i, 0, card);
 			delay.restart();
 			return (true);
 		}
@@ -54,11 +55,14 @@ var Hand = function(canvas)
 	{
 		var position = new Vector2D(0, 0);
 		var rightPadding = (canvas.width - cardSize.x / 2);
+		var next;
 		
 		for (var i = 0; i < self.cards.length; i++) {
 			position.x = SYS.PADDING + (rightPadding / self.cards.length) * i;
 			position.y = canvas.height - SYS.PADDING - cardSize.y;
-			if (checkMousePosition(position)) {
+			next = new Vector2D(position.x, position.y);
+			next.x += rightPadding / self.cards.length;
+			if (checkMousePosition(position) && !checkMousePosition(next)) {
 				position.y -= SYS.PADDING;
 				if (pushCards(selected, self.cards, i, (selected.length < 4)))
 					continue;
@@ -67,7 +71,7 @@ var Hand = function(canvas)
 			cardsTileset.draw(ctx, self.cards[i].value, self.cards[i].color.id);
 		}
 	}
-	var drawSelectedCards = function(ctx)
+	var drawSelectedCards = function(ctx, rect)
 	{
 		var position = new Vector2D(0, 0);
 		var time = delay.getElapsedTime();
@@ -85,15 +89,14 @@ var Hand = function(canvas)
 		}
 	}
 	
-	this.render = function(ctx)
+	this.render = function(ctx, rect)
 	{
-		rect.x = (canvas.width - rect.width) / 2;
-		rect.y = (canvas.height - rect.height) / 2;
-		ctx.strokeStyle = "lightgray";
-		ctx.lineWidth = 5;
-		ctx.strokeRect(rect.x, rect.y, rect.width, rect.height);
 		drawHandCards(ctx);
-		drawSelectedCards(ctx);
+		drawSelectedCards(ctx, rect);
+	}
+	this.getCardSize = function()
+	{
+		return (cardSize);
 	}
 	this.getSelected = function()
 	{

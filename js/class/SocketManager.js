@@ -11,6 +11,10 @@ var SocketManager = function(server, game)
 		{
 			getLoginInfos(datas, socket);
 		});
+		socket.on("Game:send_cards", function(datas)
+		{
+			getSendedCards(datas, socket);
+		});
 		socket.on("disconnect", function()
 		{
 			onDisconnect(socket);
@@ -36,6 +40,21 @@ var SocketManager = function(server, game)
 			room.addUser(socket);
 		}
 		socket.emit("Login:send_status", output);
+	}
+	var checkCards = function(hand, cards)
+	{
+		cards.forEach(function(card) {
+			if (hand.indexOf(card) == -1)
+				return (false);
+		});
+		return (true);
+	}
+	var getSendedCards = function(datas, socket)
+	{
+		let room = game.getRoom(socket.room);
+
+		if (room != undefined && checkCards(socket.hand, datas.cards))
+			room.computeTurn(socket, datas.cards);
 	}
 	var onDisconnect = function(socket)
 	{

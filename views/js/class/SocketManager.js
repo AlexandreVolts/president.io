@@ -26,6 +26,10 @@ var SocketManager = function(socket, game)
 		}
 		game.setHand(hand);
 	}
+	var updateGame = function(datas)
+	{
+		console.log(datas);
+	}
 	
 	this.getPlayersNumber = function()
 	{
@@ -34,4 +38,5 @@ var SocketManager = function(socket, game)
 	socket.on("Room:join", manageUserEvents);
 	socket.on("Room:leave", manageUserEvents);
 	socket.on("Game:send_hand", manageHand);
+	socket.on("Game:update", updateGame);
 }
