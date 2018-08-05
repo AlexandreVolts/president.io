@@ -1,4 +1,5 @@
 const Deck = require("./Deck.js");
+const Card = require("./Card.js");
 const POSSIBLE_PATTERNS = ["0", "00", "000", "0000", "012", "0123"];
 
 var Room = function(name, password = undefined)
@@ -14,8 +15,8 @@ var Room = function(name, password = undefined)
 	
 	this.name = name;
 
-	deck.generate(); //!!!
-	deck.shuffle(0.9); //!!!
+	//deck.generate(); //!!!
+	//deck.shuffle(0.9); //!!!
 	var startGame = function()
 	{
 		let hands;
@@ -34,6 +35,13 @@ var Room = function(name, password = undefined)
 	}
 	var checkPattern = function(cards)
 	{
+		let strengths = new Array(cards.length);
+		let cardsPattern = "";
+		
+		strengths[0] = 0;
+		for (let i = 0, len = cards.length; i < len; i++) 
+			cardsPattern += cards[i].strength - cards[0].strength;
+		console.log(cardsPattern);
 		return (true);
 	}
 	
@@ -49,8 +57,8 @@ var Room = function(name, password = undefined)
 		let output = {pseudo: socket.pseudo};
 		
 		if (!gameStarted) {
-			socket.hand = deck.distribute(4)[0]; //!!!
-			socket.emit("Game:send_hand", {hand: socket.hand}); //!!!
+			//socket.hand = deck.distribute(4)[0]; //!!!
+			//socket.emit("Game:send_hand", {hand: socket.hand}); //!!!
 			players.push(socket);
 			if (players.length >= 4)
 				startGame();
@@ -65,7 +73,7 @@ var Room = function(name, password = undefined)
 	{
 		let output = {
 			pseudo: socket.pseudo,
-			hand: cards
+			newCards: cards
 		};
 		let index;
 		
@@ -77,11 +85,12 @@ var Room = function(name, password = undefined)
 		if (cards != undefined) {
 			cards.forEach(function(card)
 			{
-				index = socket.hand.indexOf(card);
+				index = Card.indexOf(socket.hand, card);
 				socket.hand.splice(index, 1);
 			});
 		}
 		self.broadcast("Game:update", output);
+		socket.emit("Game:update_hand", {hand: socket.hand});
 		return (true);
 	}
 	this.removeUser = function(socket)

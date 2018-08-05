@@ -1,4 +1,5 @@
-let socketio = require("socket.io");
+const socketio = require("socket.io");
+const Card = require("./Card.js");
 
 var SocketManager = function(server, game)
 {
@@ -43,11 +44,13 @@ var SocketManager = function(server, game)
 	}
 	var checkCards = function(hand, cards)
 	{
+		let output = true;
+		
 		cards.forEach(function(card) {
-			if (hand.indexOf(card) == -1)
-				return (false);
+			if (Card.indexOf(hand, card) == -1)
+				output = false;
 		});
-		return (true);
+		return (output);
 	}
 	var getSendedCards = function(datas, socket)
 	{

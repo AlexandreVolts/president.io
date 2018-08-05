@@ -12,6 +12,7 @@ var Hand = function(canvas)
 	var delay = new Clock();
 	
 	this.cards = [];
+	this.currentCards = [];
 
 	cardSize.x *= 12.5;
 	cardSize.y *= 20;
@@ -42,11 +43,10 @@ var Hand = function(canvas)
 		var card;
 		var i = 0;
 
-		if (mouseClicked && time > CLICK_DELAY && additionalConditions) {
+		if (time > CLICK_DELAY && additionalConditions) {
 			card = substractor.splice(index, 1)[0];
 			for (; i < adder.length && card.strength > adder[i].strength; i++);
 			adder.splice(i, 0, card);
-			delay.restart();
 			return (true);
 		}
 		return (false);
@@ -56,6 +56,7 @@ var Hand = function(canvas)
 		var position = new Vector2D(0, 0);
 		var rightPadding = (canvas.width - cardSize.x / 2);
 		var next;
+		var additionalCondition;
 		
 		for (var i = 0; i < self.cards.length; i++) {
 			position.x = SYS.PADDING + (rightPadding / self.cards.length) * i;
@@ -64,35 +65,47 @@ var Hand = function(canvas)
 			next.x += rightPadding / self.cards.length;
 			if (checkMousePosition(position) && !checkMousePosition(next)) {
 				position.y -= SYS.PADDING;
-				if (pushCards(selected, self.cards, i, (selected.length < 4)))
+				additionalCondition = (selected.length < 4 && mouseClicked);
+				if (pushCards(selected, self.cards, i, additionalCondition)) {
+					delay.restart();
 					continue;
+				}
 			}
 			cardsTileset.position = position;
 			cardsTileset.draw(ctx, self.cards[i].value, self.cards[i].color.id);
 		}
 	}
-	var drawSelectedCards = function(ctx, rect)
+	var drawCardsOnMiddle = function(array, ctx, rect, isSelectedArray = false)
 	{
 		var position = new Vector2D(0, 0);
 		var time = delay.getElapsedTime();
 
-		for (var i = 0; i < selected.length; i++) {
+		for (var i = 0; i < array.length; i++) {
 			position.x = rect.x + (rect.width / 4) * i;
 			position.y = rect.y + SYS.PADDING / 2;
 			if (checkMousePosition(position)) {
 				position.y -= SYS.PADDING / 2;
-				if (pushCards(self.cards, selected, i))
+				if (isSelectedArray && pushCards(self.cards, selected, i, mouseClicked)) {
+					delay.restart();
 					continue;
+				}
 			}
 			cardsTileset.position = position;
-			cardsTileset.draw(ctx, selected[i].value, selected[i].color.id);
+			cardsTileset.draw(ctx, array[i].value, array[i].color.id);
 		}
 	}
 	
+	this.clearSelected = function()
+	{
+		for (var i = 0, len = selected.length; i < len; i++) {
+			pushCards(self.cards, selected, 0);
+		}
+	}
 	this.render = function(ctx, rect)
 	{
 		drawHandCards(ctx);
-		drawSelectedCards(ctx, rect);
+		drawCardsOnMiddle(self.currentCards, ctx, rect);
+		drawCardsOnMiddle(selected, ctx, rect, true);
 	}
 	this.getCardSize = function()
 	{

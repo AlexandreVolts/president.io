@@ -46,6 +46,10 @@ var Game = function(canvas, socket)
 		hand.render(context, rect);
 		window.requestAnimationFrame(self.render);
 	}
+	this.getHand = function()
+	{
+		return (hand);
+	}
 	this.setHand = function(cards)
 	{
 		if (!Array.isArray(cards))
