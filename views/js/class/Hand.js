@@ -72,7 +72,7 @@ var Hand = function(canvas)
 				}
 			}
 			cardsTileset.position = position;
-			cardsTileset.draw(ctx, self.cards[i].value, self.cards[i].color.id);
+			cardsTileset.draw(ctx, self.cards[i].value, self.cards[i].color);
 		}
 	}
 	var drawCardsOnMiddle = function(array, ctx, rect, isSelectedArray = false)
@@ -91,7 +91,7 @@ var Hand = function(canvas)
 				}
 			}
 			cardsTileset.position = position;
-			cardsTileset.draw(ctx, array[i].value, array[i].color.id);
+			cardsTileset.draw(ctx, array[i].value, array[i].color);
 		}
 	}
 	

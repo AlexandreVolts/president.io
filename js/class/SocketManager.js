@@ -57,7 +57,7 @@ var SocketManager = function(server, game)
 		let room = game.getRoom(socket.room);
 
 		if (room != undefined && checkCards(socket.hand, datas.cards))
-			room.computeTurn(socket, datas.cards);
+			room.getRound().computeTurn(socket, datas.cards);
 	}
 	var onDisconnect = function(socket)
 	{

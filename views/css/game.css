@@ -1,6 +1,14 @@
-body {
-	overflow: hidden;
+section {
+	display: flex;
+	flex-direction: row-reverse;
 }
 canvas {
 	background-image: radial-gradient(lime, green);
+}
+#chat {
+	width: 20%;
+	min-width: 200px;
+}
+#textBox {
+	overflow: auto;
 }

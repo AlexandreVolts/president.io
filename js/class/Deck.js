@@ -22,7 +22,7 @@ var Deck = function()
 				strength = i - 2;
 				if (strength < 0)
 					strength += NAMES.length;
-				cards.push(new Card(NAMES[i], i, strength, {name: COLORS[j], id: j}));
+				cards.push(new Card(NAMES[i], i, strength, j));
 			}
 		}
 	}

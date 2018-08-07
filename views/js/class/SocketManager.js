@@ -24,21 +24,36 @@ var SocketManager = function(socket, game)
 	}
 	var manageUserEvents = function(datas)
 	{
+		var message = "has " + datas.event + " the room.";
+		
+		console.log(message);
 		playersNumber = datas.playersNumber;
+		game.getChat().writeMessage(datas.pseudo, message);
 	}
 	var manageHand = function(datas)
 	{
-		if (datas.hand != undefined)
+		if (datas.hand != undefined && datas.hand.length > 0)
 			game.setHand(sortCards(datas.hand));
 	}
 	var updateGame = function(datas)
 	{
 		var hand = game.getHand();
 		
-		console.log(datas);
-		if (datas.newCards != undefined)
+		if (datas.newCards.length > 0) {
 			hand.currentCards = datas.newCards;
+			game.getChat().writeMessage(datas.pseudo, " overbidden.");
+		}
+		else
+			game.getChat().writeMessage(datas.pseudo, " passed his turn.");
 		hand.clearSelected();
+	}
+	var manageNewTurn = function(datas)
+	{
+		var hand = game.getHand();
+		
+		game.getChat().writeMessage(datas.pseudo, " won the turn.");
+		hand.clearSelected();
+		hand.currentCards = [];
 	}
 	
 	this.getPlayersNumber = function()
@@ -50,4 +65,5 @@ var SocketManager = function(socket, game)
 	socket.on("Game:send_hand", manageHand);
 	socket.on("Game:update", updateGame);
 	socket.on("Game:update_hand", manageHand);
+	socket.on("Game:new_turn", manageNewTurn);
 }
