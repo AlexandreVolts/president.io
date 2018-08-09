@@ -9,6 +9,7 @@ var Round = function(room, players)
 	let passed = 0;
 	let pattern;
 	let playedCards = [];
+	let enders = 0;
 
 	var initialise = function()
 	{
@@ -65,14 +66,23 @@ var Round = function(room, players)
 			newCards: cards
 		};
 
-		currentPlayer++;
-		if (currentPlayer >= players.length)
-			currentPlayer = 0;
+		do {
+			currentPlayer++;
+			if (currentPlayer >= players.length)
+				currentPlayer = 0;
+		} while (players[currentPlayer].place != -1);
 		cards.forEach(function(card)
 		{
 			index = Card.indexOf(socket.hand, card);
 			socket.hand.splice(index, 1);
 		});
+		if (socket.hand.length <= 0) {
+			socket.place = enders;
+			enders++;
+			console.log("A new player ended.");
+			if (enders >= players.length - 1)
+				room.startRound();
+		}
 		room.broadcast("Game:update", output);
 		socket.emit("Game:update_hand", {hand: socket.hand});
 	}
@@ -90,7 +100,7 @@ var Round = function(room, players)
 		else
 			passed++;
 		changeCurrentPlayer(socket, cards);
-		if (passed >= players.length - 1)
+		if (passed >= players.length - enders - 1)
 			reset();
 		return (true);
 	}

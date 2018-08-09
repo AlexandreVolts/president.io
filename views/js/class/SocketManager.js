@@ -25,10 +25,14 @@ var SocketManager = function(socket, game)
 	var manageUserEvents = function(datas)
 	{
 		var message = "has " + datas.event + " the room.";
+		var chat = game.getChat();
 		
-		console.log(message);
 		playersNumber = datas.playersNumber;
-		game.getChat().writeMessage(datas.pseudo, message);
+		chat.writeMessage(datas.pseudo, message);
+		if (datas.event === "join")
+			chat.addUser(datas.pseudo);
+		else
+			chat.removeUser(datas.index);
 	}
 	var manageHand = function(datas)
 	{

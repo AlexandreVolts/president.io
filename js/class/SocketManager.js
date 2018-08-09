@@ -30,7 +30,7 @@ var SocketManager = function(server, game)
 
 		if (room == undefined)
 			output.message = "Room doesn't exists.";
-		else if (datas.pseudo.length < 2 || datas.pseudo.length > 20)
+		else if (datas.pseudo.length < 2 || datas.pseudo.length > 15)
 			output.message = "Invalid username length.";
 		else if (password !== room.getPassword())
 			output.message = "Invalid password.";

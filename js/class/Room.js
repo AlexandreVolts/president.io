@@ -7,20 +7,26 @@ var Room = function(name, password = undefined)
 	let players = [];
 	let waiters = [];
 	let currentRound = 0;
-	let roundNumber = 5;
 	let gameStarted = false;
 	let round;
 	
 	this.name = name;
 
-	/* 
-		TODO: 	- Manage when all played have passed 
+	/*
+		TODO: 	- Compute and send score
+				- Count rounds
+				- Maybe a little pause between each round ?
+				- Card redistribution at end of a game
 	*/
-	var startRound = function()
+	this.startRound = function()
 	{
 		currentRound++;
 		round = new Round(self, players);
 		gameStarted = true;
+		players.forEach(function(socket)
+		{
+			socket.place = -1;
+		});
 	}
 	
 	this.broadcast = function(event, datas)
@@ -33,6 +39,7 @@ var Room = function(name, password = undefined)
 	this.addUser = function(socket)
 	{
 		let output = {
+			index: players.length,
 			pseudo: socket.pseudo,
 			event: "join"
 		};
@@ -40,7 +47,7 @@ var Room = function(name, password = undefined)
 		if (!gameStarted) {
 			players.push(socket);
 			if (players.length >= 4)
-				startRound();
+				self.startRound();
 		}
 		else
 			waiters.push(socket);
@@ -50,9 +57,9 @@ var Room = function(name, password = undefined)
 	}
 	this.removeUser = function(socket)
 	{
-		let index = players.indexOf(socket);
 		let currentPlayer;
 		let output = {
+			index: players.indexOf(socket),
 			pseudo: socket.pseudo,
 			event: "leave"
 		};
@@ -62,7 +69,7 @@ var Room = function(name, password = undefined)
 			if (players[currentPlayer].id === socket.id && currentPlayer == players.length - 1)
 				round.setCurrentPlayer(0);
 		}
-		players.splice(index, 1);
+		players.splice(output.index, 1);
 		output.playersNumber = players.length;
 		self.broadcast("Room:leave", output);
 		console.log("User " + socket.pseudo + " leaved the room " + self.name + ".");

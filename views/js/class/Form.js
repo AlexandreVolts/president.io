@@ -19,6 +19,7 @@ var Form = function(socket)
 		output.pseudo = inputs[0].value;
 		output.password = inputs[1].value;
 		output.roomName = url.substr(index, url.length);
+		document.title = output.roomName;
 		socket.emit("Login:send_infos", output);
 	}
 	var getLoginStatus = function(datas)
