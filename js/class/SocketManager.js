@@ -36,16 +36,21 @@ var SocketManager = function(server, game)
 			output.message = "Invalid password.";
 		else {
 			output.valid = true;
+			output.players = room.getFormattedPlayersInfos();
 			socket.pseudo = datas.pseudo;
 			socket.room = room.name;
-			room.addUser(socket);
+			socket.score = 0;
 		}
 		socket.emit("Login:send_status", output);
+		if (output.valid)
+			room.addUser(socket);
 	}
 	var checkCards = function(hand, cards)
 	{
 		let output = true;
 		
+		if (!Array.isArray(cards))
+			return (false);
 		cards.forEach(function(card) {
 			if (Card.indexOf(hand, card) == -1)
 				output = false;

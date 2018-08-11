@@ -8,6 +8,8 @@ var Game = function(canvas, socket)
 	var rect = {};
 	var button;
 
+	this.timer = undefined;
+
 	rect.width = hand.getCardSize().x * 4;
 	rect.height = hand.getCardSize().y;
 	button = new Button(rect.width / 4, rect.height / 4);
@@ -44,6 +46,8 @@ var Game = function(canvas, socket)
 		context.clearRect(0, 0, canvas.width, canvas.height);
 		drawRect();
 		drawButton();
+		if (self.timer != undefined)
+			self.timer.draw(context, canvas.width);
 		hand.render(context, rect);
 		window.requestAnimationFrame(self.render);
 	}

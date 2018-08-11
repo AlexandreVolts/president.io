@@ -22,6 +22,16 @@ var SocketManager = function(socket, game)
 		}
 		return (output);
 	}
+	var getSuffix = function(place)
+	{
+		if (place == 1)
+			return ("st");
+		if (place == 2)
+			return ("nd");
+		if (place == 3)
+			return ("rd");
+		return ("th");
+	}
 	var manageUserEvents = function(datas)
 	{
 		var message = "has " + datas.event + " the room.";
@@ -42,7 +52,11 @@ var SocketManager = function(socket, game)
 	var updateGame = function(datas)
 	{
 		var hand = game.getHand();
-		
+
+		if (datas.nextPlayerId == socket.index)
+			game.timer = new Timer();
+		else
+			game.timer = undefined;
 		if (datas.newCards.length > 0) {
 			hand.currentCards = datas.newCards;
 			game.getChat().writeMessage(datas.pseudo, " overbidden.");
@@ -55,9 +69,17 @@ var SocketManager = function(socket, game)
 	{
 		var hand = game.getHand();
 		
-		game.getChat().writeMessage(datas.pseudo, " won the turn.");
+		game.getChat().writeMessage(datas.pseudo, " won the turn !", "blue");
 		hand.clearSelected();
 		hand.currentCards = [];
+	}
+	var managePlayerEnd = function(datas)
+	{
+		var chat = game.getChat();
+		var suffix = datas.place + getSuffix(datas.place);
+
+		chat.updateScore(datas.index, datas.score);
+		chat.writeMessage(datas.pseudo, " is the " + suffix + " to end !", "green");
 	}
 	
 	this.getPlayersNumber = function()
@@ -70,4 +92,5 @@ var SocketManager = function(socket, game)
 	socket.on("Game:update", updateGame);
 	socket.on("Game:update_hand", manageHand);
 	socket.on("Game:new_turn", manageNewTurn);
+	socket.on("Game:player_end", managePlayerEnd);
 }

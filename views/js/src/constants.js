@@ -5,6 +5,7 @@ const SYS = {
 	CARDS_BACK_NAME: "cards_back.svg",
 	CARDS_COL_NBR: 14,
 	CARDS_ROW_NBR: 4,
+	CLICK_DELAY: 0.2,
 	Button: {
 		VALID_TEXT: "OK",
 		PASS_TEXT: "PASS"

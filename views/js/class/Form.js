@@ -1,4 +1,4 @@
-var Form = function(socket)
+var Form = function(socket, chat)
 {
 	var header = document.getElementsByTagName("header")[0];
 	var section = document.getElementsByTagName("section")[0];
@@ -31,6 +31,11 @@ var Form = function(socket)
 		header.removeChild(errorText);
 		header.removeChild(form);
 		section.appendChild(canvas);
+		datas.players.forEach(function(player)
+		{
+			chat.addUser(player.pseudo, player.score);
+		});
+		socket.index = datas.players.length;
 	}
 	button.addEventListener("click", sendLoginInfos);
 	socket.on("Login:send_status", getLoginStatus);

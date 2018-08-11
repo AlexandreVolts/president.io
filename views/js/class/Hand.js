@@ -1,5 +1,4 @@
 const CARDS_PATH = SYS.IMG_PATH + SYS.CARDS_TILESET_NAME;
-const CLICK_DELAY = 0.2;
 
 var Hand = function(canvas)
 {
@@ -10,14 +9,31 @@ var Hand = function(canvas)
 	var mouseClicked = false;
 	var selected = [];
 	var delay = new Clock();
+	var animatedCard;
+	var rightPadding;
 	
 	this.cards = [];
 	this.currentCards = [];
 
 	cardSize.x *= 12.5;
 	cardSize.y *= 20;
+	rightPadding = (canvas.width - cardSize.x / 2);
 	cardsTileset.setTileSize(cardSize);
 
+	var computePosition = function(index, rect = undefined)
+	{
+		var output = new Vector2D(0, 0);
+		
+		if (rect == undefined) {
+			output.x = SYS.PADDING + (rightPadding / self.cards.length) * index;
+			output.y = canvas.height - SYS.PADDING - cardSize.y;
+		}
+		else {
+			output.x = rect.x + (rect.width / 4) * index;
+			output.y = rect.y + SYS.PADDING / 2;
+		}
+		return (output);
+	}
 	var manageMouseClick = function(event)
 	{
 		mousePosition.x = event.clientX;
@@ -40,56 +56,81 @@ var Hand = function(canvas)
 	var pushCards = function(adder, substractor, index, additionalConditions = true)
 	{
 		var time = delay.getElapsedTime();
-		var card;
 		var i = 0;
 
-		if (time > CLICK_DELAY && additionalConditions) {
-			card = substractor.splice(index, 1)[0];
-			for (; i < adder.length && card.strength > adder[i].strength; i++);
-			adder.splice(i, 0, card);
+		if (time > SYS.CLICK_DELAY && additionalConditions) {
+			animatedCard = substractor.splice(index, 1)[0];
+			for (; i < adder.length && animatedCard.strength > adder[i].strength; i++);
+			adder.splice(i, 0, animatedCard);
 			return (true);
 		}
 		return (false);
 	}
+	var drawAnimatedCard = function(ctx, rect)
+	{
+		var ratio = delay.getElapsedTime() / SYS.CLICK_DELAY;
+		var distance = new Vector2D(0, 0);
+		var index = Card.indexOf(self.cards, animatedCard);
+		var finalPosition;
+
+		if (ratio >= 1) {
+			animatedCard = undefined;
+			return;
+		}
+		if (index != -1)
+			finalPosition = computePosition(index);
+		else {
+			index = Card.indexOf(selected, animatedCard);
+			finalPosition = computePosition(index, rect);
+		}
+		distance.x = finalPosition.x - animatedCard.origin.x;
+		distance.y = finalPosition.y - animatedCard.origin.y;
+		cardsTileset.position.x = animatedCard.origin.x + distance.x * ratio;
+		cardsTileset.position.y = animatedCard.origin.y + distance.y * ratio;
+		cardsTileset.draw(ctx, animatedCard.value, animatedCard.color);
+	}
 	var drawHandCards = function(ctx)
 	{
-		var position = new Vector2D(0, 0);
-		var rightPadding = (canvas.width - cardSize.x / 2);
+		var position;
 		var next;
 		var additionalCondition;
 		
 		for (var i = 0; i < self.cards.length; i++) {
-			position.x = SYS.PADDING + (rightPadding / self.cards.length) * i;
-			position.y = canvas.height - SYS.PADDING - cardSize.y;
+			position = computePosition(i);
 			next = new Vector2D(position.x, position.y);
 			next.x += rightPadding / self.cards.length;
 			if (checkMousePosition(position) && !checkMousePosition(next)) {
 				position.y -= SYS.PADDING;
 				additionalCondition = (selected.length < 4 && mouseClicked);
 				if (pushCards(selected, self.cards, i, additionalCondition)) {
+					animatedCard.origin = position;
 					delay.restart();
 					continue;
 				}
 			}
+			if (Card.equals(self.cards, animatedCard))
+				continue;
 			cardsTileset.position = position;
 			cardsTileset.draw(ctx, self.cards[i].value, self.cards[i].color);
 		}
 	}
 	var drawCardsOnMiddle = function(array, ctx, rect, isSelectedArray = false)
 	{
-		var position = new Vector2D(0, 0);
+		var position;
 		var time = delay.getElapsedTime();
 
 		for (var i = 0; i < array.length; i++) {
-			position.x = rect.x + (rect.width / 4) * i;
-			position.y = rect.y + SYS.PADDING / 2;
+			position = computePosition(i, rect);
 			if (checkMousePosition(position)) {
 				position.y -= SYS.PADDING / 2;
 				if (isSelectedArray && pushCards(self.cards, selected, i, mouseClicked)) {
+					animatedCard.origin = position;
 					delay.restart();
 					continue;
 				}
 			}
+			if (Card.equals(array[i], animatedCard))
+				continue;
 			cardsTileset.position = position;
 			cardsTileset.draw(ctx, array[i].value, array[i].color);
 		}
@@ -97,15 +138,16 @@ var Hand = function(canvas)
 	
 	this.clearSelected = function()
 	{
-		for (var i = 0, len = selected.length; i < len; i++) {
+		for (var i = 0, len = selected.length; i < len; i++)
 			pushCards(self.cards, selected, 0);
-		}
 	}
 	this.render = function(ctx, rect)
 	{
 		drawHandCards(ctx);
 		drawCardsOnMiddle(self.currentCards, ctx, rect);
 		drawCardsOnMiddle(selected, ctx, rect, true);
+		if (animatedCard)
+			drawAnimatedCard(ctx, rect);
 	}
 	this.getCardSize = function()
 	{

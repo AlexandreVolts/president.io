@@ -1,15 +1,18 @@
 const Deck = require("./Deck.js");
 const Card = require("./Card.js");
 const POSSIBLE_PATTERNS = ["0", "00", "000", "0000", "012", "0123"];
+const DELAY = 30;
 
 var Round = function(room, players)
 {
+	let self = this;
 	let deck = new Deck();
 	let currentPlayer = 0;
 	let passed = 0;
 	let pattern;
 	let playedCards = [];
 	let enders = 0;
+	let timeout;
 
 	var initialise = function()
 	{
@@ -59,6 +62,16 @@ var Round = function(room, players)
 			return (false);
 		return (pattern === Card.getPattern(cards));
 	}
+	var computeScore = function()
+	{
+		let output = 0;
+
+		players.forEach(function(socket)
+		{
+			output += socket.hand.length;
+		});
+		return (output);
+	}
 	var changeCurrentPlayer = function(socket, cards)
 	{
 		let output = {
@@ -66,29 +79,45 @@ var Round = function(room, players)
 			newCards: cards
 		};
 
-		do {
-			currentPlayer++;
-			if (currentPlayer >= players.length)
-				currentPlayer = 0;
-		} while (players[currentPlayer].place != -1);
 		cards.forEach(function(card)
 		{
 			index = Card.indexOf(socket.hand, card);
 			socket.hand.splice(index, 1);
 		});
-		if (socket.hand.length <= 0) {
-			socket.place = enders;
-			enders++;
-			console.log("A new player ended.");
-			if (enders >= players.length - 1)
-				room.startRound();
-		}
+		if (socket.hand.length == 0)
+			managePlayerEnd(socket);
+		do {
+			currentPlayer++;
+			if (currentPlayer >= players.length)
+				currentPlayer = 0;
+			clearTimeout(timeout);
+			timeout = setTimeout(function() {
+				self.computeTurn(players[currentPlayer], []);
+			}, 1000 * DELAY);
+		} while (players[currentPlayer].place != -1);
+		output.nextPlayerId = currentPlayer;
 		room.broadcast("Game:update", output);
 		socket.emit("Game:update_hand", {hand: socket.hand});
 	}
+	var managePlayerEnd = function(socket)
+	{
+		let output = {
+			pseudo: socket.pseudo,
+			index: currentPlayer,
+			place: enders + 1
+		};
+		
+		socket.place = enders;
+		socket.score += computeScore();
+		enders++;
+		output.score = socket.score;
+		if (enders >= players.length - 1)
+			room.startRound();
+		room.broadcast("Game:player_end", output);
+	}
 
 	this.computeTurn = function(socket, cards)
-	{		
+	{
 		if (players[currentPlayer].id !== socket.id)
 			return (false);
 		if (cards.length > 0) {
@@ -97,21 +126,20 @@ var Round = function(room, players)
 			passed = 0;
 			playedCards = cards;
 		}
-		else
+		else {
+			if (pattern == undefined)
+				return (false);
 			passed++;
+		}
 		changeCurrentPlayer(socket, cards);
 		if (passed >= players.length - enders - 1)
 			reset();
 		return (true);
 	}
-	this.getCurrentPlayer = function()
+	this.forceChangeCurrentPlayer = function()
 	{
-		return (currentPlayer);
-	}
-	this.setCurrentPlayer = function(newCurrent)
-	{
-		if (newCurrent >= 0 && newCurrent < players.length)
-			currentPlayer = newCurrent;
+		if (currentPlayer >= players.length)
+			currentPlayer++;
 	}
 	initialise();
 }
