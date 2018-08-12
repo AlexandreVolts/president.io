@@ -5,14 +5,11 @@ var Game = function(canvas, socket)
 	var socketManager = new SocketManager(socket, self);
 	var chat = new Chat();
 	var hand = new Hand(canvas);
-	var rect = {};
 	var button;
 
 	this.timer = undefined;
 
-	rect.width = hand.getCardSize().x * 4;
-	rect.height = hand.getCardSize().y;
-	button = new Button(rect.width / 4, rect.height / 4);
+	button = new Button(200, 75);
 	button.text = SYS.Button.PASS_TEXT;
 	
 	var sendPlayedCards = function(event)
@@ -23,16 +20,10 @@ var Game = function(canvas, socket)
 		
 		socket.emit("Game:send_cards", output);
 	}
-	var drawRect = function()
-	{
-		rect.x = (canvas.width - rect.width) / 2;
-		rect.y = (canvas.height - rect.height) / 3;
-		context.strokeStyle = SYS.Rect.BORDER_COLOR;
-		context.lineWidth = SYS.Rect.BORDER_WIDTH;
-		context.strokeRect(rect.x, rect.y, rect.width, rect.height);
-	}
 	var drawButton = function()
 	{
+		var rect = hand.getMiddle().getRect();
+		
 		button.position.x = rect.x + (rect.width - button.size.x) / 2;
 		button.position.y = rect.y + rect.height + SYS.PADDING;
 		button.text = SYS.Button.PASS_TEXT;
@@ -44,11 +35,10 @@ var Game = function(canvas, socket)
 	this.render = function()
 	{
 		context.clearRect(0, 0, canvas.width, canvas.height);
-		drawRect();
 		drawButton();
 		if (self.timer != undefined)
 			self.timer.draw(context, canvas.width);
-		hand.render(context, rect);
+		hand.render(context);
 		window.requestAnimationFrame(self.render);
 	}
 	this.getChat = function()

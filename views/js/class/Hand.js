@@ -7,17 +7,16 @@ var Hand = function(canvas)
 	var cardSize = cardsTileset.getTileSize();
 	var mousePosition = new Vector2D(0, 0);
 	var mouseClicked = false;
-	var selected = [];
 	var delay = new Clock();
 	var animatedCard;
 	var rightPadding;
+	var middle;
 	
 	this.cards = [];
-	this.currentCards = [];
 
 	cardSize.x *= 12.5;
 	cardSize.y *= 20;
-	rightPadding = (canvas.width - cardSize.x / 2);
+	middle = new Middle(canvas, cardSize);
 	cardsTileset.setTileSize(cardSize);
 
 	var computePosition = function(index, rect = undefined)
@@ -80,7 +79,7 @@ var Hand = function(canvas)
 		if (index != -1)
 			finalPosition = computePosition(index);
 		else {
-			index = Card.indexOf(selected, animatedCard);
+			index = Card.indexOf(middle.selected, animatedCard);
 			finalPosition = computePosition(index, rect);
 		}
 		distance.x = finalPosition.x - animatedCard.origin.x;
@@ -101,8 +100,8 @@ var Hand = function(canvas)
 			next.x += rightPadding / self.cards.length;
 			if (checkMousePosition(position) && !checkMousePosition(next)) {
 				position.y -= SYS.PADDING;
-				additionalCondition = (selected.length < 4 && mouseClicked);
-				if (pushCards(selected, self.cards, i, additionalCondition)) {
+				additionalCondition = (middle.selected.length < 4 && mouseClicked);
+				if (pushCards(middle.selected, self.cards, i, additionalCondition)) {
 					animatedCard.origin = position;
 					delay.restart();
 					continue;
@@ -123,7 +122,7 @@ var Hand = function(canvas)
 			position = computePosition(i, rect);
 			if (checkMousePosition(position)) {
 				position.y -= SYS.PADDING / 2;
-				if (isSelectedArray && pushCards(self.cards, selected, i, mouseClicked)) {
+				if (isSelectedArray && pushCards(self.cards, middle.selected, i, mouseClicked)) {
 					animatedCard.origin = position;
 					delay.restart();
 					continue;
@@ -138,14 +137,18 @@ var Hand = function(canvas)
 	
 	this.clearSelected = function()
 	{
-		for (var i = 0, len = selected.length; i < len; i++)
-			pushCards(self.cards, selected, 0);
+		for (var i = 0, len = middle.selected.length; i < len; i++)
+			pushCards(self.cards, middle.selected, 0);
 	}
-	this.render = function(ctx, rect)
+	this.render = function(ctx)
 	{
+		var rect = middle.getRect();
+		
+		rightPadding = (canvas.width - cardSize.x / 2);
+		middle.render(ctx);
 		drawHandCards(ctx);
-		drawCardsOnMiddle(self.currentCards, ctx, rect);
-		drawCardsOnMiddle(selected, ctx, rect, true);
+		drawCardsOnMiddle(middle.currentCards, ctx, rect);
+		drawCardsOnMiddle(middle.selected, ctx, rect, true);
 		if (animatedCard)
 			drawAnimatedCard(ctx, rect);
 	}
@@ -153,9 +156,13 @@ var Hand = function(canvas)
 	{
 		return (cardSize);
 	}
+	this.getMiddle = function()
+	{
+		return (middle);
+	}
 	this.getSelected = function()
 	{
-		return (selected);
+		return (middle.selected);
 	}
 	window.addEventListener("mousedown", manageMouseClick);
 	window.addEventListener("mouseup", manageMouseClick);

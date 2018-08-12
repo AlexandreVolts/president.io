@@ -15,6 +15,10 @@ var Room = function(name, password = undefined)
 	/*
 		TODO: 	- Count rounds
 				- Maybe a little pause between each round ?
+				- What about revolution ?
+				- Improve chatbox (bugged when a player leave)
+				- Card redistribution between rounds
+				- Add an helper (colorize playable cards)
 	*/
 	var appendWaiters = function()
 	{
@@ -36,10 +40,12 @@ var Room = function(name, password = undefined)
 	
 	this.broadcast = function(event, datas)
 	{
-		players.forEach(function(socket)
-		{
-			socket.emit(event, datas);
-		});
+		let output = datas;
+
+		for(let i = 0, len = players.length; i < len; i++) {
+			output.index = i;
+			players[i].emit(event, datas);
+		}
 		waiters.forEach(function(socket)
 		{
 			socket.emit(event, datas);
@@ -48,7 +54,6 @@ var Room = function(name, password = undefined)
 	this.addUser = function(socket)
 	{
 		let output = {
-			index: players.length,
 			pseudo: socket.pseudo,
 			event: "join"
 		};
@@ -68,7 +73,7 @@ var Room = function(name, password = undefined)
 	{
 		let currentPlayer;
 		let output = {
-			index: players.indexOf(socket),
+			indexToRemove: players.indexOf(socket),
 			pseudo: socket.pseudo,
 			event: "leave"
 		};
@@ -80,7 +85,7 @@ var Room = function(name, password = undefined)
 				appendWaiters();
 			}
 		}
-		players.splice(output.index, 1);
+		players.splice(output.indexToRemove, 1);
 		output.playersNumber = players.length;
 		self.broadcast("Room:leave", output);
 		console.log("User " + socket.pseudo + " leaved the room " + self.name + ".");

@@ -37,48 +37,51 @@ var SocketManager = function(socket, game)
 		var message = "has " + datas.event + " the room.";
 		var chat = game.getChat();
 		
+		socket.index = datas.index;
 		playersNumber = datas.playersNumber;
 		chat.writeMessage(datas.pseudo, message);
 		if (datas.event === "join")
 			chat.addUser(datas.pseudo);
 		else
-			chat.removeUser(datas.index);
+			chat.removeUser(datas.indexToRemove);
 	}
 	var manageHand = function(datas)
 	{
-		if (datas.hand != undefined && datas.hand.length > 0)
-			game.setHand(sortCards(datas.hand));
+		game.setHand(sortCards(datas.hand));
 	}
 	var updateGame = function(datas)
 	{
 		var hand = game.getHand();
 
+		hand.clearSelected();
 		if (datas.nextPlayerId == socket.index)
 			game.timer = new Timer();
 		else
 			game.timer = undefined;
 		if (datas.newCards.length > 0) {
-			hand.currentCards = datas.newCards;
+			hand.getMiddle().currentCards = datas.newCards;
+			if (datas.newCards[datas.newCards.length - 1].value == 1)
+				hand.getMiddle().clear();
 			game.getChat().writeMessage(datas.pseudo, " overbidden.");
 		}
 		else
 			game.getChat().writeMessage(datas.pseudo, " passed his turn.");
-		hand.clearSelected();
 	}
 	var manageNewTurn = function(datas)
 	{
 		var hand = game.getHand();
 		
-		game.getChat().writeMessage(datas.pseudo, " won the turn !", "blue");
 		hand.clearSelected();
-		hand.currentCards = [];
+		hand.getMiddle().clear();
+		game.getChat().writeMessage(datas.pseudo, " won the turn !", "blue");
 	}
 	var managePlayerEnd = function(datas)
 	{
 		var chat = game.getChat();
 		var suffix = datas.place + getSuffix(datas.place);
 
-		chat.updateScore(datas.index, datas.score);
+		game.getHand().getMiddle().clear();
+		chat.updateScore(datas.enderIndex, datas.score);
 		chat.writeMessage(datas.pseudo, " is the " + suffix + " to end !", "green");
 	}
 	
