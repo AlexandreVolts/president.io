@@ -80,7 +80,8 @@ var SocketManager = function(socket, game)
 		var chat = game.getChat();
 		var suffix = datas.place + getSuffix(datas.place);
 
-		game.getHand().getMiddle().clear();
+		if (datas.place >= playersNumber)
+			game.getHand().getMiddle().clear();
 		chat.updateScore(datas.enderIndex, datas.score);
 		chat.writeMessage(datas.pseudo, " is the " + suffix + " to end !", "green");
 	}

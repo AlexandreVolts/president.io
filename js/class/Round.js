@@ -78,16 +78,7 @@ var Round = function(room, players)
 			pseudo: socket.pseudo,
 			newCards: cards
 		};
-
-		cards.forEach(function(card)
-		{
-			index = Card.indexOf(socket.hand, card);
-			socket.hand.splice(index, 1);
-		});
-		if (socket.hand.length == 0) {
-			if (managePlayerEnd(socket))
-				return;
-		}
+		
 		do {
 			currentPlayer++;
 			if (currentPlayer >= players.length)
@@ -101,17 +92,40 @@ var Round = function(room, players)
 		room.broadcast("Game:update", output);
 		socket.emit("Game:update_hand", {hand: socket.hand});
 	}
-	var managePlayerEnd = function(socket)
+	var changeTurn = function(socket, cards)
+	{
+		let save = currentPlayer;
+		let tmp;
+
+		cards.forEach(function(card)
+		{
+			index = Card.indexOf(socket.hand, card);
+			socket.hand.splice(index, 1);
+		});
+		changeCurrentPlayer(socket, cards);
+		if (cards.length > 0 && cards[cards.length - 1].value == 1) {
+			tmp = currentPlayer;
+			currentPlayer = save;
+			reset();
+		}
+		if (socket.hand.length == 0) {
+			managePlayerEnd(socket, save);
+			if (tmp != undefined)
+				currentPlayer = tmp;
+		}
+	}
+	var managePlayerEnd = function(socket, id)
 	{
 		let output = {
 			pseudo: socket.pseudo,
-			enderIndex: currentPlayer,
+			enderIndex: id,
 			place: enders + 1
 		};
 		
 		socket.place = enders;
 		socket.score += computeScore();
 		enders++;
+		passed--;
 		output.score = socket.score;
 		if (enders >= players.length - 1) {
 			clearTimeout(timeout);
@@ -130,17 +144,13 @@ var Round = function(room, players)
 				return (false);
 			passed = 0;
 			playedCards = cards;
-			if (cards[cards.length - 1].value == 1) {
-				reset();
-				currentPlayer--;
-			}
 		}
 		else {
 			if (pattern == undefined)
 				return (false);
 			passed++;
 		}
-		changeCurrentPlayer(socket, cards);
+		changeTurn(socket, cards);
 		if (enders >= players.length - 1)
 			return (true);
 		if (passed >= players.length - enders - 1)

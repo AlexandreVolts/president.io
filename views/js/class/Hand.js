@@ -37,7 +37,7 @@ var Hand = function(canvas)
 	{
 		mousePosition.x = event.clientX;
 		mousePosition.y = event.clientY;
-		mouseClicked = event.type == "mousedown";
+		mouseClicked = event.type === "mousedown";
 	}
 	var manageMouseMove = function(event)
 	{
@@ -145,7 +145,7 @@ var Hand = function(canvas)
 		var rect = middle.getRect();
 		
 		rightPadding = (canvas.width - cardSize.x / 2);
-		middle.render(ctx);
+		middle.render(ctx, cardsTileset);
 		drawHandCards(ctx);
 		drawCardsOnMiddle(middle.currentCards, ctx, rect);
 		drawCardsOnMiddle(middle.selected, ctx, rect, true);
