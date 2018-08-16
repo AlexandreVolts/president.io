@@ -60,12 +60,14 @@ var SocketManager = function(socket, game)
 			game.timer = undefined;
 		if (datas.newCards.length > 0) {
 			hand.getMiddle().currentCards = datas.newCards;
-			if (datas.newCards[datas.newCards.length - 1].value == 1)
-				hand.getMiddle().clear();
 			game.getChat().writeMessage(datas.pseudo, " overbidden.");
 		}
 		else
 			game.getChat().writeMessage(datas.pseudo, " passed his turn.");
+	}
+	var manageRevolution = function(datas)
+	{
+		game.getChat().writeMessage("", "REVOLUTION !", "red");
 	}
 	var manageNewTurn = function(datas)
 	{
@@ -80,8 +82,10 @@ var SocketManager = function(socket, game)
 		var chat = game.getChat();
 		var suffix = datas.place + getSuffix(datas.place);
 
-		if (datas.place >= playersNumber)
+		if (datas.place >= playersNumber - 1) {
 			game.getHand().getMiddle().clear();
+			game.timer = undefined;
+		}
 		chat.updateScore(datas.enderIndex, datas.score);
 		chat.writeMessage(datas.pseudo, " is the " + suffix + " to end !", "green");
 	}
@@ -95,6 +99,7 @@ var SocketManager = function(socket, game)
 	socket.on("Game:send_hand", manageHand);
 	socket.on("Game:update", updateGame);
 	socket.on("Game:update_hand", manageHand);
+	socket.on("Game:reverse", manageRevolution);
 	socket.on("Game:new_turn", manageNewTurn);
 	socket.on("Game:player_end", managePlayerEnd);
 }

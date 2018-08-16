@@ -13,6 +13,7 @@ var Round = function(room, players)
 	let playedCards = [];
 	let enders = 0;
 	let timeout;
+	let revolution = false;
 
 	var initialise = function()
 	{
@@ -20,7 +21,6 @@ var Round = function(room, players)
 		let output = {};
 		
 		deck.generate();
-		deck.shuffle(0.9);
 		hands = deck.distribute(players.length);
 		for (let i = 0, l = hands.length; i < l; i++) {
 			players[i].hand = hands[i];
@@ -39,6 +39,15 @@ var Round = function(room, players)
 		output.pseudo = players[currentPlayer].pseudo;
 		room.broadcast("Game:new_turn", output);
 	}
+	var reverseCardOrder = function()
+	{
+		if (pattern === "0000") {
+			revolution = !revolution;
+			room.broadcast("Game:reverse", {
+				pseudo: players[currentPlayer].pseudo
+			});
+		}
+	}
 	var setNewPattern = function(cards)
 	{
 		let output = false;
@@ -51,6 +60,7 @@ var Round = function(room, players)
 				output = true;
 			}
 		});
+		reverseCardOrder();
 		return (output);
 	}
 	var checkPattern = function(cards)
@@ -58,8 +68,15 @@ var Round = function(room, players)
 		if (pattern == undefined) {
 			return (setNewPattern(cards));
 		}
-		if (cards[0].strength <= playedCards[0].strength)
-			return (false);
+		if (!revolution) {
+			if (cards[0].strength <= playedCards[0].strength)
+				return (false);
+		}
+		else {
+			if (cards[0].strength >= playedCards[0].strength)
+				return (false);
+		}
+		reverseCardOrder();
 		return (pattern === Card.getPattern(cards));
 	}
 	var computeScore = function()
@@ -103,10 +120,13 @@ var Round = function(room, players)
 			socket.hand.splice(index, 1);
 		});
 		changeCurrentPlayer(socket, cards);
-		if (cards.length > 0 && cards[cards.length - 1].value == 1) {
-			tmp = currentPlayer;
-			currentPlayer = save;
-			reset();
+		if (cards.length > 0) {
+			if ((cards[cards.length - 1].value == 1 && !revolution) 
+				|| (cards[cards.length - 1].value == 2 && revolution)) {
+				tmp = currentPlayer;
+				currentPlayer = save;
+				reset();
+			}
 		}
 		if (socket.hand.length == 0) {
 			managePlayerEnd(socket, save);
@@ -160,7 +180,7 @@ var Round = function(room, players)
 	this.forceChangeCurrentPlayer = function()
 	{
 		if (currentPlayer >= players.length)
-			currentPlayer++;
+			currentPlayer = 0;
 	}
 	initialise();
 }

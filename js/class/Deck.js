@@ -41,11 +41,14 @@ var Deck = function()
 	this.distribute = function(nbPlayers)
 	{
 		let output = new Array(nbPlayers);
+		let card;
 
 		for (let i = 0; i < nbPlayers; i++)
 			output[i] = [];
-		for (let i = 0; cards.length > 0; i++)
-			output[i % nbPlayers].push(cards.shift());
+		for (let i = 0; cards.length > 0; i++) {
+			card = cards.splice(rand(cards.length), 1)[0];
+			output[i % nbPlayers].push(card);
+		}
 		return (output);
 	}
 }

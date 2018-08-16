@@ -15,8 +15,6 @@ var Room = function(name, password = undefined)
 	/*
 		TODO: 	- Count rounds
 				- Maybe a little pause between each round ?
-				- What about revolution ?
-				- Improve chatbox (bugged when a player leave)
 				- Card redistribution between rounds
 				- Add an helper (colorize playable cards)
 	*/
@@ -108,7 +106,9 @@ var Room = function(name, password = undefined)
 	}
 	this.getRound = function()
 	{
-		return (round);
+		if (gameStarted)
+			return (round);
+		return (undefined);
 	}
 }
 module.exports = Room;

@@ -96,8 +96,7 @@ var Hand = function(canvas)
 		
 		for (var i = 0; i < self.cards.length; i++) {
 			position = computePosition(i);
-			next = new Vector2D(position.x, position.y);
-			next.x += rightPadding / self.cards.length;
+			next = computePosition(i + 1)
 			if (checkMousePosition(position) && !checkMousePosition(next)) {
 				position.y -= SYS.PADDING;
 				additionalCondition = (middle.selected.length < 4 && mouseClicked);
