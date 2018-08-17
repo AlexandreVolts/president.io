@@ -61,6 +61,7 @@ var Hand = function(canvas)
 			animatedCard = substractor.splice(index, 1)[0];
 			for (; i < adder.length && animatedCard.strength > adder[i].strength; i++);
 			adder.splice(i, 0, animatedCard);
+			mouseClicked = false;
 			return (true);
 		}
 		return (false);
@@ -162,6 +163,14 @@ var Hand = function(canvas)
 	this.getSelected = function()
 	{
 		return (middle.selected);
+	}
+	if (window.innerWidth <= 800 && window.innerHeight <= 600) {
+		window.addEventListener("click", function(event)
+		{
+			mousePosition.x = event.clientX;
+			mousePosition.y = event.clientY;
+			mouseClicked = true;
+		});
 	}
 	window.addEventListener("mousedown", manageMouseClick);
 	window.addEventListener("mouseup", manageMouseClick);

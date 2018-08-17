@@ -2,20 +2,20 @@ section {
 	display: flex;
 	flex-direction: row-reverse;
 }
-canvas {
-	background-image: radial-gradient(lime, green);
+#chat {
+	background-color: rgba(0, 0, 0, 0.75);
+	box-shadow: -5px 0px 10px black;
+	color: white;
+	min-width: 200px;
+	width: 20%;
 }
 .userBox {
 	display: flex;
 	justify-content: space-around;
 }
 .userBox * {
-	padding: 0;
 	margin: 0;
-}
-#chat {
-	width: 20%;
-	min-width: 200px;
+	padding: 0;
 }
 #textBox {
 	overflow-y: auto;

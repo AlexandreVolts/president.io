@@ -49,6 +49,18 @@ var SocketManager = function(socket, game)
 	{
 		game.setHand(sortCards(datas.hand));
 	}
+	var manageStart = function(datas)
+	{
+		var chat = game.getChat();
+
+		if (datas.starter == datas.index) {
+			chat.writeImportantMessage("", "You start this round !");
+		}
+		else {
+			chat.addSeparator();
+			chat.writeMessage(datas.starterPseudo, " starts the game.");
+		}
+	}
 	var updateGame = function(datas)
 	{
 		var hand = game.getHand();
@@ -67,7 +79,7 @@ var SocketManager = function(socket, game)
 	}
 	var manageRevolution = function(datas)
 	{
-		game.getChat().writeMessage("", "REVOLUTION !", "red");
+		game.getChat().writeImportantMessage("", "REVOLUTION !", "red");
 	}
 	var manageNewTurn = function(datas)
 	{
@@ -75,19 +87,20 @@ var SocketManager = function(socket, game)
 		
 		hand.clearSelected();
 		hand.getMiddle().clear();
-		game.getChat().writeMessage(datas.pseudo, " won the turn !", "blue");
+		game.getChat().writeMessage(datas.pseudo, " won the turn !", "cyan");
 	}
 	var managePlayerEnd = function(datas)
 	{
 		var chat = game.getChat();
 		var suffix = datas.place + getSuffix(datas.place);
 
+		chat.updateScore(datas.enderIndex, datas.score);
+		chat.writeMessage(datas.pseudo, " is the " + suffix + " to end !", "lime");
 		if (datas.place >= playersNumber - 1) {
 			game.getHand().getMiddle().clear();
 			game.timer = undefined;
+			chat.writeMessage("", "There is only one in-game player. New Round starts.", "red");
 		}
-		chat.updateScore(datas.enderIndex, datas.score);
-		chat.writeMessage(datas.pseudo, " is the " + suffix + " to end !", "green");
 	}
 	
 	this.getPlayersNumber = function()
@@ -97,6 +110,7 @@ var SocketManager = function(socket, game)
 	socket.on("Room:join", manageUserEvents);
 	socket.on("Room:leave", manageUserEvents);
 	socket.on("Game:send_hand", manageHand);
+	socket.on("Game:round_start", manageStart);
 	socket.on("Game:update", updateGame);
 	socket.on("Game:update_hand", manageHand);
 	socket.on("Game:reverse", manageRevolution);

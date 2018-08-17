@@ -29,7 +29,7 @@ var Chat = function()
 		users.splice(index, 1);
 		resize();
 	}
-	this.writeMessage = function(pseudo, message, color = "black")
+	this.writeMessage = function(pseudo, message, color = "white")
 	{
 		var p = document.createElement("p");
 
@@ -38,6 +38,16 @@ var Chat = function()
 		p.innerHTML += message;
 		textBox.appendChild(p);
 		textBox.scrollTop = textBox.scrollHeight;
+	}
+	this.writeImportantMessage = function(pseudo, message, color = "white")
+	{
+		self.addSeparator();
+		self.writeMessage(pseudo, message, color);
+		self.addSeparator();
+	}
+	this.addSeparator = function()
+	{
+		textBox.appendChild(document.createElement("hr"));
 	}
 	window.addEventListener("resize", resize);
 }

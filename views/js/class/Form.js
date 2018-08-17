@@ -28,8 +28,7 @@ var Form = function(socket, chat)
 			errorText.textContent = datas.message;
 			return;
 		}
-		header.removeChild(errorText);
-		header.removeChild(form);
+		document.body.removeChild(header);
 		section.appendChild(canvas);
 		datas.players.forEach(function(player)
 		{

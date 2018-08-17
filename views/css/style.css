@@ -1,4 +1,51 @@
-html, body {
+html, body, h1 {
 	padding: 0;
 	margin: 0;
+}
+body {
+	background-image: url("/assets/img/background.jpg");
+	font-family: "Retrocycles";
+}
+form {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	margin: auto;
+	width: 50%;
+}
+h1 {
+	color: red;
+	font-family: "Budmo Jiggler";
+	font-size: 90px;
+	text-align: center;
+	text-shadow: 0px 0px 20px black;
+}
+input, button {
+	background-image: linear-gradient(rgb(50, 25, 25), transparent);
+	background-color: black;
+	border: none;
+	border-radius: 3px;
+	color: red;
+	font-family: "Retrocycles";
+	font-size: 20px;
+	margin-top: 10px;
+	min-width: 250px;
+	outline: none;
+	text-align: center;
+	text-shadow: 0px 0px 20px black;
+	width: 25%;
+	transition: background-color 0.5s, width 0.75s;
+}
+input[type="submit"], button {
+	background-image: linear-gradient(transparent, black);
+	background-color: rgb(50, 25, 25);
+	transition: background-color 1s, width 0.75s;
+}
+input:focus {
+	background-color: transparent;
+	width: 50%;
+}
+input[type="submit"]:hover, button:hover {
+	background-color: darkred;
+	width: 50%;
 }

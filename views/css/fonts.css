@@ -1,0 +1,12 @@
+@font-face {
+	src: url("/assets/fonts/Retrocycles.ttf") format("truetype");
+	font-family: "Retrocycles";
+}
+@font-face {
+	src: url("/assets/fonts/budmo_jiggler.ttf") format("truetype");
+	font-family: "Budmo Jiggler";
+}
+@font-face {
+	src: url("/assets/fonts/yorkwhiteletter.ttf") format("truetype");
+	font-family: "York White Letter";
+}

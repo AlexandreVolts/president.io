@@ -19,6 +19,7 @@ var Round = function(room, players)
 	{
 		let hands;
 		let output = {};
+		let broadcastOutput = {};
 		
 		deck.generate();
 		hands = deck.distribute(players.length);
@@ -28,6 +29,9 @@ var Round = function(room, players)
 			players[i].emit("Game:send_hand", output);
 		}
 		currentPlayer = Math.floor(Math.random() * players.length);
+		broadcastOutput.starter = currentPlayer;
+		broadcastOutput.starterPseudo = players[currentPlayer].pseudo;
+		room.broadcast("Game:round_start", broadcastOutput);
 	}
 	var reset = function()
 	{
@@ -147,11 +151,11 @@ var Round = function(room, players)
 		enders++;
 		passed--;
 		output.score = socket.score;
+		room.broadcast("Game:player_end", output);
 		if (enders >= players.length - 1) {
 			clearTimeout(timeout);
 			room.startRound();
 		}
-		room.broadcast("Game:player_end", output);
 		return (enders >= players.length - 1);
 	}
 
