@@ -5,11 +5,11 @@ var Timer = function()
 	this.draw = function(ctx, width)
 	{
 		var time = Math.floor(clock.getElapsedTime());
-		var text = (30 - time) + "s";
+		var text = (30 - time) + " s";
 		var position = new Vector2D(0, SYS.PADDING * 4);
 
-		ctx.font = "30px Arial";
-		ctx.fillStyle = "black";
+		ctx.font = "50px York White Letter";
+		ctx.fillStyle = "white";
 		position.x = width - ctx.measureText(text).width - SYS.PADDING;
 		ctx.fillText(text, position.x, position.y);
 	}

@@ -1,6 +1,8 @@
 var SocketManager = function(socket, game)
 {
 	var playersNumber = 0;
+	var chat = new Chat();
+	var form = new Form(socket, chat);
 
 	var sortCards = function(array)
 	{
@@ -35,7 +37,6 @@ var SocketManager = function(socket, game)
 	var manageUserEvents = function(datas)
 	{
 		var message = "has " + datas.event + " the room.";
-		var chat = game.getChat();
 		
 		socket.index = datas.index;
 		playersNumber = datas.playersNumber;
@@ -51,15 +52,15 @@ var SocketManager = function(socket, game)
 	}
 	var manageStart = function(datas)
 	{
-		var chat = game.getChat();
-
-		if (datas.starter == datas.index) {
-			chat.writeImportantMessage("", "You start this round !");
-		}
+		for (let i = 0, len = datas.cardsNbr.length; i < len; i++)
+			chat.getUser(i).showCards(datas.cardsNbr[i]);
+		if (datas.starter == datas.index)
+			chat.writeImportantMessage("", "You start the round !");
 		else {
 			chat.addSeparator();
-			chat.writeMessage(datas.starterPseudo, " starts the game.");
+			chat.writeMessage(datas.starterPseudo, " starts the round.");
 		}
+		chat.resize();
 	}
 	var updateGame = function(datas)
 	{
@@ -72,14 +73,15 @@ var SocketManager = function(socket, game)
 			game.timer = undefined;
 		if (datas.newCards.length > 0) {
 			hand.getMiddle().currentCards = datas.newCards;
-			game.getChat().writeMessage(datas.pseudo, " overbidden.");
+			chat.writeMessage(datas.pseudo, " overbidden.");
 		}
 		else
-			game.getChat().writeMessage(datas.pseudo, " passed his turn.");
+			chat.writeMessage(datas.pseudo, " passed his turn.");
+		chat.getUser(datas.currentPlayer).showCards(datas.handLength);
 	}
 	var manageRevolution = function(datas)
 	{
-		game.getChat().writeImportantMessage("", "REVOLUTION !", "red");
+		chat.writeImportantMessage("", "REVOLUTION !", "red");
 	}
 	var manageNewTurn = function(datas)
 	{
@@ -87,15 +89,15 @@ var SocketManager = function(socket, game)
 		
 		hand.clearSelected();
 		hand.getMiddle().clear();
-		game.getChat().writeMessage(datas.pseudo, " won the turn !", "cyan");
+		chat.writeMessage(datas.pseudo, " won the turn !", "cyan");
 	}
 	var managePlayerEnd = function(datas)
 	{
-		var chat = game.getChat();
 		var suffix = datas.place + getSuffix(datas.place);
 
-		chat.updateScore(datas.enderIndex, datas.score);
+		chat.getUser(datas.enderIndex).update(datas.score);
 		chat.writeMessage(datas.pseudo, " is the " + suffix + " to end !", "lime");
+		chat.resize();
 		if (datas.place >= playersNumber - 1) {
 			game.getHand().getMiddle().clear();
 			game.timer = undefined;

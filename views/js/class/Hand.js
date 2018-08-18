@@ -37,7 +37,7 @@ var Hand = function(canvas)
 	{
 		mousePosition.x = event.clientX;
 		mousePosition.y = event.clientY;
-		mouseClicked = event.type === "mousedown";
+		mouseClicked = event.type === "mousedown" || event.type === "click";
 	}
 	var manageMouseMove = function(event)
 	{
@@ -164,15 +164,11 @@ var Hand = function(canvas)
 	{
 		return (middle.selected);
 	}
-	if (window.innerWidth <= 800 && window.innerHeight <= 600) {
-		window.addEventListener("click", function(event)
-		{
-			mousePosition.x = event.clientX;
-			mousePosition.y = event.clientY;
-			mouseClicked = true;
-		});
+	if (window.innerWidth <= 800 && window.innerHeight <= 600)
+		window.addEventListener("click", manageMouseClick);
+	else {
+		window.addEventListener("mousedown", manageMouseClick);
+		window.addEventListener("mouseup", manageMouseClick);
 	}
-	window.addEventListener("mousedown", manageMouseClick);
-	window.addEventListener("mouseup", manageMouseClick);
 	window.addEventListener("mousemove", manageMouseMove);
 }

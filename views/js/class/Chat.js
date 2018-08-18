@@ -6,20 +6,16 @@ var Chat = function()
 	var chatHeader = document.getElementById("chatHeader");
 	var users = [];
 	
-	var resize = function()
+	this.resize = function()
 	{
 		container.style.height = window.innerHeight + "px";
-		textBox.style.height = (window.innerHeight - chatHeader.offsetHeight) + "px";
+		textBox.style.height = (window.innerHeight - chatHeader.offsetHeight - 5) + "px";
 	}
 	this.addUser = function(pseudo, score = 0)
 	{
 		users.push(new UserBox(chatHeader, pseudo));
-		self.updateScore(users.length - 1, score);
-		resize();
-	}
-	this.updateScore = function(index, score)
-	{
-		users[index].update(score);
+		users[users.length - 1].update(score);
+		self.resize();
 	}
 	this.removeUser = function(index)
 	{
@@ -27,7 +23,7 @@ var Chat = function()
 			return;
 		users[index].destroy();
 		users.splice(index, 1);
-		resize();
+		self.resize();
 	}
 	this.writeMessage = function(pseudo, message, color = "white")
 	{
@@ -49,5 +45,9 @@ var Chat = function()
 	{
 		textBox.appendChild(document.createElement("hr"));
 	}
-	window.addEventListener("resize", resize);
+	this.getUser = function(id)
+	{
+		return (users[id]);
+	}
+	window.addEventListener("resize", self.resize);
 }

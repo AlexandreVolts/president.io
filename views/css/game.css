@@ -9,13 +9,22 @@ section {
 	min-width: 200px;
 	width: 20%;
 }
-.userBox {
+#chat img {
+	width: 20px;
+	height: 30px;
+	margin-bottom: 5px;
+}
+.userBox, .sectionBox {
 	display: flex;
 	justify-content: space-around;
 }
 .userBox * {
 	margin: 0;
 	padding: 0;
+}
+.sectionBox {
+	border-bottom: 1px dotted white;
+	margin-bottom: 5px;
 }
 #textBox {
 	overflow-y: auto;

@@ -3,7 +3,6 @@ var Game = function(canvas, socket)
 	var self = this;
 	var context = canvas.getContext("2d");
 	var socketManager = new SocketManager(socket, self);
-	var chat = new Chat();
 	var hand = new Hand(canvas);
 	var button;
 
@@ -40,10 +39,6 @@ var Game = function(canvas, socket)
 			self.timer.draw(context, canvas.width);
 		hand.render(context);
 		window.requestAnimationFrame(self.render);
-	}
-	this.getChat = function()
-	{
-		return (chat);
 	}
 	this.getHand = function()
 	{

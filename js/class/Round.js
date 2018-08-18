@@ -23,9 +23,11 @@ var Round = function(room, players)
 		
 		deck.generate();
 		hands = deck.distribute(players.length);
+		broadcastOutput.cardsNbr = new Array(players.length);
 		for (let i = 0, l = hands.length; i < l; i++) {
 			players[i].hand = hands[i];
 			output.hand = hands[i];
+			broadcastOutput.cardsNbr[i] = hands[i].length;
 			players[i].emit("Game:send_hand", output);
 		}
 		currentPlayer = Math.floor(Math.random() * players.length);
@@ -97,9 +99,11 @@ var Round = function(room, players)
 	{
 		let output = {
 			pseudo: socket.pseudo,
-			newCards: cards
+			newCards: cards,
+			handLength: socket.hand.length
 		};
 		
+		output.currentPlayer = currentPlayer;
 		do {
 			currentPlayer++;
 			if (currentPlayer >= players.length)

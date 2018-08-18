@@ -56,15 +56,14 @@ var Room = function(name, password = undefined)
 			event: "join"
 		};
 		
-		if (!gameStarted) {
+		if (!gameStarted)
 			players.push(socket);
-			if (players.length >= 4)
-				self.startRound();
-		}
 		else
 			waiters.push(socket);
 		output.playersNumber = players.length;
 		self.broadcast("Room:join", output);
+		if (!gameStarted && players.length >= 4)
+			self.startRound();
 		console.log("User " + socket.pseudo + " has join the room " + self.name + ".");
 	}
 	this.removeUser = function(socket)
