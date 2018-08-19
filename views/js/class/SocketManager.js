@@ -3,7 +3,9 @@ var SocketManager = function(socket, game)
 	var playersNumber = 0;
 	var chat = new Chat();
 	var form = new Form(socket, chat);
+	var musicPlayer = new MusicPlayer();
 
+	musicPlayer.changeMusic(SYS.Music.WAITING_THEME);
 	var sortCards = function(array)
 	{
 		var cardMin;
@@ -52,22 +54,27 @@ var SocketManager = function(socket, game)
 	}
 	var manageStart = function(datas)
 	{
+		var hand = game.getHand();
+		
 		for (let i = 0, len = datas.cardsNbr.length; i < len; i++)
 			chat.getUser(i).showCards(datas.cardsNbr[i]);
-		if (datas.starter == datas.index)
+		hand.isPlayerTurn = (datas.starter == datas.index);
+		if (hand.isPlayerTurn)
 			chat.writeImportantMessage("", "You start the round !");
 		else {
 			chat.addSeparator();
 			chat.writeMessage(datas.starterPseudo, " starts the round.");
 		}
 		chat.resize();
+		musicPlayer.changeMusic(SYS.Music.IN_GAME_THEME);
 	}
 	var updateGame = function(datas)
 	{
 		var hand = game.getHand();
 
 		hand.clearSelected();
-		if (datas.nextPlayerId == socket.index)
+		hand.isPlayerTurn = (datas.nextPlayerId == socket.index);
+		if (hand.isPlayerTurn)
 			game.timer = new Timer();
 		else
 			game.timer = undefined;
@@ -81,12 +88,14 @@ var SocketManager = function(socket, game)
 	}
 	var manageRevolution = function(datas)
 	{
+		game.getHand().revolution = datas.isRevolution;
 		chat.writeImportantMessage("", "REVOLUTION !", "red");
 	}
 	var manageNewTurn = function(datas)
 	{
 		var hand = game.getHand();
 		
+		hand.isPlayerTurn = (datas.currentPlayer == socket.index);
 		hand.clearSelected();
 		hand.getMiddle().clear();
 		chat.writeMessage(datas.pseudo, " won the turn !", "cyan");
@@ -94,12 +103,14 @@ var SocketManager = function(socket, game)
 	var managePlayerEnd = function(datas)
 	{
 		var suffix = datas.place + getSuffix(datas.place);
+		var hand = game.getHand();
 
 		chat.getUser(datas.enderIndex).update(datas.score);
 		chat.writeMessage(datas.pseudo, " is the " + suffix + " to end !", "lime");
 		chat.resize();
 		if (datas.place >= playersNumber - 1) {
-			game.getHand().getMiddle().clear();
+			hand.getMiddle().clear();
+			hand.revolution = false;
 			game.timer = undefined;
 			chat.writeMessage("", "There is only one in-game player. New Round starts.", "red");
 		}

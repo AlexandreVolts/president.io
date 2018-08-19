@@ -73,8 +73,13 @@ var SocketManager = function(server, game)
 		let name = (socket.pseudo || socket.id);
 		let room = game.getRoom(socket.room);
 
-		if (room != undefined)
+		if (room != undefined) {
 			room.removeUser(socket);
+			if (room.getFormattedPlayersInfos().length == 0) {
+				console.log("Room " + room.name + " has been destroyed.");
+				game.removeRoom(room.name);
+			}
+		}
 	}
 }
 module.exports = SocketManager;

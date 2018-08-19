@@ -11,12 +11,16 @@ var Hand = function(canvas)
 	var animatedCard;
 	var rightPadding;
 	var middle;
+	var shade;
 	
+	this.revolution = false;
+	this.isPlayerTurn = false;
 	this.cards = [];
 
 	cardSize.x *= 12.5;
 	cardSize.y *= 20;
 	middle = new Middle(canvas, cardSize);
+	shade = new ShadeTransition(cardSize.x, cardSize.y);
 	cardsTileset.setTileSize(cardSize);
 
 	var computePosition = function(index, rect = undefined)
@@ -28,8 +32,8 @@ var Hand = function(canvas)
 			output.y = canvas.height - SYS.PADDING - cardSize.y;
 		}
 		else {
-			output.x = rect.x + (rect.width / 4) * index;
-			output.y = rect.y + SYS.PADDING / 2;
+			output.x = rect.x + (rect.width / 4) * index + SYS.PADDING;
+			output.y = rect.y + SYS.PADDING;
 		}
 		return (output);
 	}
@@ -37,12 +41,18 @@ var Hand = function(canvas)
 	{
 		mousePosition.x = event.clientX;
 		mousePosition.y = event.clientY;
-		mouseClicked = event.type === "mousedown" || event.type === "click";
+		mouseClicked = event.type === "mousedown";
 	}
 	var manageMouseMove = function(event)
 	{
 		mousePosition.x = event.clientX;
 		mousePosition.y = event.clientY;
+	}
+	var manageTouch = function(event)
+	{
+		mousePosition.x = event.changedTouches[0].pageX;
+		mousePosition.y = event.changedTouches[0].pageY;
+		mouseClicked = event.type === "touchstart";
 	}
 	var checkMousePosition = function(pos)
 	{
@@ -89,6 +99,16 @@ var Hand = function(canvas)
 		cardsTileset.position.y = animatedCard.origin.y + distance.y * ratio;
 		cardsTileset.draw(ctx, animatedCard.value, animatedCard.color);
 	}
+	var drawHelper = function(ctx, strength)
+	{
+		if (middle.currentCards.length == 0) {
+			shade.draw(ctx);
+			return;
+		}
+		if ((!self.revolution && middle.currentCards[0].strength < strength)
+			|| (self.revolution && middle.currentCards[0].strength > strength))
+			shade.draw(ctx);
+	}
 	var drawHandCards = function(ctx)
 	{
 		var position;
@@ -97,6 +117,7 @@ var Hand = function(canvas)
 		
 		for (var i = 0; i < self.cards.length; i++) {
 			position = computePosition(i);
+			shade.position = position;
 			next = computePosition(i + 1)
 			if (checkMousePosition(position) && !checkMousePosition(next)) {
 				position.y -= SYS.PADDING;
@@ -111,6 +132,8 @@ var Hand = function(canvas)
 				continue;
 			cardsTileset.position = position;
 			cardsTileset.draw(ctx, self.cards[i].value, self.cards[i].color);
+			if (self.isPlayerTurn)
+				drawHelper(ctx, self.cards[i].strength);
 		}
 	}
 	var drawCardsOnMiddle = function(array, ctx, rect, isSelectedArray = false)
@@ -164,11 +187,9 @@ var Hand = function(canvas)
 	{
 		return (middle.selected);
 	}
-	if (window.innerWidth <= 800 && window.innerHeight <= 600)
-		window.addEventListener("click", manageMouseClick);
-	else {
-		window.addEventListener("mousedown", manageMouseClick);
-		window.addEventListener("mouseup", manageMouseClick);
-	}
+	window.addEventListener("touchstart", manageTouch);
+	window.addEventListener("touchend", manageTouch);
+	window.addEventListener("mousedown", manageMouseClick);
+	window.addEventListener("mouseup", manageMouseClick);
 	window.addEventListener("mousemove", manageMouseMove);
 }

@@ -2,8 +2,8 @@ var Middle = function(canvas, cardSize)
 {
 	var self = this;
 	var rect = {
-		width: cardSize.x * 4,
-		height: cardSize.y
+		width: cardSize.x * 4 + SYS.PADDING * 2,
+		height: cardSize.y + SYS.PADDING * 2
 	};
 	var clock = new Clock();
 	var discarding = [];

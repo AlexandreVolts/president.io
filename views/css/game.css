@@ -2,6 +2,20 @@ section {
 	display: flex;
 	flex-direction: row-reverse;
 }
+canvas {
+	position: relative;
+	z-index: 2;
+}
+#middleButton, #hiddenMiddleButton {
+	position: absolute;
+	height: 50px;
+	z-index: 1;
+	transition: color 0.5s;
+}
+#hiddenMiddleButton {
+	background: none;
+	z-index: 3;
+}
 #chat {
 	background-color: rgba(0, 0, 0, 0.75);
 	box-shadow: -5px 0px 10px black;
@@ -28,4 +42,17 @@ section {
 }
 #textBox {
 	overflow-y: auto;
+}
+footer form {
+	background-color: rgba(0, 0, 0, 0.75);
+	border-radius: 0px 0px 15px 0px;
+	color: white;
+	padding: 10px;
+	position: absolute;
+	top: 0%;
+	width: 250px;
+	z-index: 10;
+}
+#hiddenHoverButton:hover {
+	width: 25%;
 }

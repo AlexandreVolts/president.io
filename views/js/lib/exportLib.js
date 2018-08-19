@@ -1,7 +1,7 @@
 function exportLib(callback, id = 0)
 {
-	var modules = ["Drawable", "Button", "Vector2D", 
-					"Clock", "Sound", "Tileset"];
+	var modules = ["Drawable", "Vector2D", "Clock", 
+					"Sound", "ShadeTransition","Tileset"];
 	var script;
 
 	script = document.createElement("script");

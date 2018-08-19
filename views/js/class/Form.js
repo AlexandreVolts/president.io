@@ -7,9 +7,11 @@ var Form = function(socket, chat)
 	var inputs = form.getElementsByTagName("input");
 	var button = form.getElementsByTagName("button")[0];
 	var errorText = document.getElementById("loginError");
+	var chatContainer = document.getElementById("chat");
 	var url = window.location.href;
 
 	section.removeChild(canvas);
+	section.removeChild(chatContainer);
 	var sendLoginInfos = function()
 	{
 		const URL_SEPARATOR = "room/";
@@ -19,7 +21,7 @@ var Form = function(socket, chat)
 		output.pseudo = inputs[0].value;
 		output.password = inputs[1].value;
 		output.roomName = url.substr(index, url.length);
-		document.title = output.roomName;
+		document.title = output.roomName + " - president.io";
 		socket.emit("Login:send_infos", output);
 	}
 	var getLoginStatus = function(datas)
@@ -29,6 +31,7 @@ var Form = function(socket, chat)
 			return;
 		}
 		document.body.removeChild(header);
+		section.appendChild(chatContainer);
 		section.appendChild(canvas);
 		datas.players.forEach(function(player)
 		{

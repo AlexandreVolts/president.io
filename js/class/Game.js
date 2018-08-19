@@ -25,6 +25,16 @@ var Game = function()
 		}
 		return (false);
 	}
+	this.removeRoom = function(name)
+	{
+		var index;
+
+		index = rooms.findIndex(function(room)
+		{
+			return (room.name === name);
+		});
+		rooms.splice(index, 1);
+	}
 	this.getRoom = function(name)
 	{
 		let output = rooms.find(function(room)

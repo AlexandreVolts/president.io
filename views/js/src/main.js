@@ -15,4 +15,7 @@ function main()
 	});
 }
 
-exportLib(main);
+window.onload = function()
+{
+	exportLib(main);
+}

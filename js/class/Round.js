@@ -43,6 +43,7 @@ var Round = function(room, players)
 		pattern = undefined;
 		playedCards = [];
 		output.pseudo = players[currentPlayer].pseudo;
+		output.currentPlayer = currentPlayer;
 		room.broadcast("Game:new_turn", output);
 	}
 	var reverseCardOrder = function()
@@ -50,7 +51,8 @@ var Round = function(room, players)
 		if (pattern === "0000") {
 			revolution = !revolution;
 			room.broadcast("Game:reverse", {
-				pseudo: players[currentPlayer].pseudo
+				pseudo: players[currentPlayer].pseudo,
+				isRevolution: revolution
 			});
 		}
 	}

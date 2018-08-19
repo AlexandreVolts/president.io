@@ -16,7 +16,6 @@ var Room = function(name, password = undefined)
 		TODO: 	- Count rounds
 				- Maybe a little pause between each round ?
 				- Card redistribution between rounds
-				- Add an helper (colorize playable cards)
 	*/
 	var appendWaiters = function()
 	{

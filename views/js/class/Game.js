@@ -2,16 +2,19 @@ var Game = function(canvas, socket)
 {
 	var self = this;
 	var context = canvas.getContext("2d");
-	var socketManager = new SocketManager(socket, self);
+	var socketManager;
 	var hand = new Hand(canvas);
-	var button;
+	var button = document.createElement("button");
+	var hidden = document.getElementById("hiddenMiddleButton");
 
 	this.timer = undefined;
 
-	button = new Button(200, 75);
-	button.text = SYS.Button.PASS_TEXT;
+	button.textContent = SYS.Button.PASS_TEXT;
+	button.id = "middleButton";
+	document.getElementById("chat").appendChild(button);
+	socketManager = new SocketManager(socket, self);
 	
-	var sendPlayedCards = function(event)
+	var sendPlayedCards = function()
 	{
 		var output = {
 			cards: hand.getSelected()
@@ -23,12 +26,13 @@ var Game = function(canvas, socket)
 	{
 		var rect = hand.getMiddle().getRect();
 		
-		button.position.x = rect.x + (rect.width - button.size.x) / 2;
-		button.position.y = rect.y + rect.height + SYS.PADDING;
-		button.text = SYS.Button.PASS_TEXT;
+		button.style.left = (rect.x + (rect.width - button.offsetWidth) / 2) + "px";
+		button.style.top = (rect.y + rect.height) + "px";
+		hidden.style.left = button.style.left;
+		hidden.style.top = button.style.top;
+		button.textContent = SYS.Button.PASS_TEXT;
 		if (hand.getSelected().length > 0)
-			button.text = SYS.Button.VALID_TEXT;
-		button.draw(context);
+			button.textContent = SYS.Button.VALID_TEXT;
 	}
 	
 	this.render = function()
@@ -50,5 +54,5 @@ var Game = function(canvas, socket)
 			return;
 		hand.cards = cards;
 	}
-	button.onMouseClick(sendPlayedCards);
+	hidden.addEventListener("click", sendPlayedCards);
 }

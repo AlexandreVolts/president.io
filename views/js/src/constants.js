@@ -14,5 +14,10 @@ const SYS = {
 	Rect: {
 		BORDER_COLOR: "lightgray",
 		BORDER_WIDTH: 5
+	},
+	Music: {
+		PATH: "/assets/musics/",
+		WAITING_THEME: "Casino Calavera.flac",
+		IN_GAME_THEME: "All That.mp3"
 	}
 };

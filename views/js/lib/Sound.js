@@ -17,4 +17,9 @@ var Sound = function(src)
 		sound.pause();
 		sound.currentTime = 0;
 	}
+	this.setVolume = function(newVolume)
+	{
+		if (typeof newVolume === "number")
+			sound.volume = newVolume;
+	}
 }
