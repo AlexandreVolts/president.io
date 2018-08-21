@@ -191,6 +191,7 @@ var Round = function(room, players)
 	{
 		if (currentPlayer >= players.length)
 			currentPlayer = 0;
+		return (currentPlayer);
 	}
 	initialise();
 }

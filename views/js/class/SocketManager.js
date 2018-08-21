@@ -38,15 +38,20 @@ var SocketManager = function(socket, game)
 	}
 	var manageUserEvents = function(datas)
 	{
-		var message = "has " + datas.event + " the room.";
+		var action = datas.event == "join" ? " joined" : " left";
+		var waiter = datas.waiter ? "[Spectator] " : "[Player] ";
 		
-		socket.index = datas.index;
 		playersNumber = datas.playersNumber;
-		chat.writeMessage(datas.pseudo, message);
+		chat.writeMessage(waiter + datas.pseudo, action + " the room.");
 		if (datas.event === "join")
 			chat.addUser(datas.pseudo);
-		else
+		else {
 			chat.removeUser(datas.indexToRemove);
+			if (datas.currentPlayer != undefined) {
+				chat.activate(datas.currentPlayer);
+				game.getHand().isPlayerTurn = (datas.currentPlayer == datas.index);
+			}
+		}
 	}
 	var manageHand = function(datas)
 	{
@@ -66,6 +71,7 @@ var SocketManager = function(socket, game)
 			chat.writeMessage(datas.starterPseudo, " starts the round.");
 		}
 		chat.resize();
+		chat.activate(datas.starter);
 		musicPlayer.changeMusic(SYS.Music.IN_GAME_THEME);
 	}
 	var updateGame = function(datas)
@@ -73,7 +79,7 @@ var SocketManager = function(socket, game)
 		var hand = game.getHand();
 
 		hand.clearSelected();
-		hand.isPlayerTurn = (datas.nextPlayerId == socket.index);
+		hand.isPlayerTurn = (datas.nextPlayerId == datas.index);
 		if (hand.isPlayerTurn)
 			game.timer = new Timer();
 		else
@@ -84,6 +90,7 @@ var SocketManager = function(socket, game)
 		}
 		else
 			chat.writeMessage(datas.pseudo, " passed his turn.");
+		chat.activate(datas.nextPlayerId);
 		chat.getUser(datas.currentPlayer).showCards(datas.handLength);
 	}
 	var manageRevolution = function(datas)
@@ -95,9 +102,10 @@ var SocketManager = function(socket, game)
 	{
 		var hand = game.getHand();
 		
-		hand.isPlayerTurn = (datas.currentPlayer == socket.index);
+		hand.isPlayerTurn = (datas.currentPlayer == datas.index);
 		hand.clearSelected();
 		hand.getMiddle().clear();
+		chat.activate(datas.currentPlayer);
 		chat.writeMessage(datas.pseudo, " won the turn !", "cyan");
 	}
 	var managePlayerEnd = function(datas)

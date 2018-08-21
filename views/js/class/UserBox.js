@@ -18,6 +18,13 @@ var UserBox = function(container, pseudo)
 	score.textContent = "0pts";
 	container.appendChild(inner);
 	
+	this.activate = function(on)
+	{
+		if (on)
+			inner.classList.add("active");
+		else
+			inner.classList.remove("active");
+	}
 	this.showCards = function(cardsNbr)
 	{
 		section.innerHTML = "";

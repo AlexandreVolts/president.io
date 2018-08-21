@@ -43,6 +43,10 @@ canvas {
 #textBox {
 	overflow-y: auto;
 }
+.active {
+	border-radius: 5px 0px 5px 5px;
+	animation: activateAnimation 2s ease-in-out alternate infinite;
+}
 footer form {
 	background-color: rgba(0, 0, 0, 0.75);
 	border-radius: 0px 0px 15px 0px;
@@ -55,4 +59,17 @@ footer form {
 }
 #hiddenHoverButton:hover {
 	width: 25%;
+}
+@keyframes activateAnimation {
+	0% {
+		background-color: rgba(0, 0, 0, 0.75);
+		transform: rotateZ(0deg) translateX(-1px);
+	}
+	50% {
+		transform: rotateZ(-1deg) translateX(-1px);
+	}
+	100% {
+		background-color: rgba(100, 50, 50, 0.5);
+		transform: rotateZ(1deg) translateX(-1px);;
+	}
 }

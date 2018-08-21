@@ -16,15 +16,22 @@ var Room = function(name, password = undefined)
 		TODO: 	- Count rounds
 				- Maybe a little pause between each round ?
 				- Card redistribution between rounds
+				- Fiw the waiter multiplication bug
 	*/
 	var appendWaiters = function()
 	{
 		players = players.concat(waiters);
+		waiters.forEach(function(waiter)
+		{
+			self.removeUser(waiter);
+			self.addUser(waiter);
+		});
 		waiters = [];
 	}
 	
 	this.startRound = function()
 	{
+		gameStarted = false;
 		appendWaiters();
 		currentRound++;
 		round = new Round(self, players);
@@ -34,54 +41,62 @@ var Room = function(name, password = undefined)
 			socket.place = -1;
 		});
 	}
-	
 	this.broadcast = function(event, datas)
 	{
 		let output = datas;
+		let len = players.length;
 
-		for(let i = 0, len = players.length; i < len; i++) {
+		for(let i = 0; i < len; i++) {
 			output.index = i;
-			players[i].emit(event, datas);
+			players[i].emit(event, output);
 		}
-		waiters.forEach(function(socket)
-		{
-			socket.emit(event, datas);
-		})
+		for (let i = 0, wlen = waiters.length; i < wlen; i++) {
+			output.index = len - 1 + i;
+			waiters[i].emit(event, output);
+		};
 	}
 	this.addUser = function(socket)
 	{
 		let output = {
 			pseudo: socket.pseudo,
-			event: "join"
+			event: "join",
+			waiter: gameStarted
 		};
-		
+
 		if (!gameStarted)
 			players.push(socket);
 		else
 			waiters.push(socket);
 		output.playersNumber = players.length;
 		self.broadcast("Room:join", output);
-		if (!gameStarted && players.length >= 4)
+		if (!gameStarted && players.length >= 4 && waiters.length == 0)
 			self.startRound();
 		console.log("User " + socket.pseudo + " has join the room " + self.name + ".");
 	}
 	this.removeUser = function(socket)
 	{
-		let currentPlayer;
 		let output = {
 			indexToRemove: players.indexOf(socket),
 			pseudo: socket.pseudo,
-			event: "leave"
+			event: "leave",
+			waiter: false
 		};
 
 		if (gameStarted) {
-			round.forceChangeCurrentPlayer();
 			if (players.length <= 1) {
 				gameStarted = false;
 				appendWaiters();
 			}
 		}
-		players.splice(output.indexToRemove, 1);
+		if (output.indexToRemove != -1)
+			players.splice(output.indexToRemove, 1);
+		else {
+			output.waiter = true;
+			output.indexToRemove = players.length - 1 + waiters.indexOf(socket);
+			waiters.splice(output.indexToRemove - players.length);
+		}
+		if (gameStarted)
+			output.currentPlayer = round.forceChangeCurrentPlayer();
 		output.playersNumber = players.length;
 		self.broadcast("Room:leave", output);
 		console.log("User " + socket.pseudo + " leaved the room " + self.name + ".");

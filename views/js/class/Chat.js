@@ -5,6 +5,7 @@ var Chat = function()
 	var textBox = document.getElementById("textBox");
 	var chatHeader = document.getElementById("chatHeader");
 	var users = [];
+	var id = 0;
 	
 	this.resize = function()
 	{
@@ -24,6 +25,13 @@ var Chat = function()
 		users[index].destroy();
 		users.splice(index, 1);
 		self.resize();
+	}
+	this.activate = function(newID)
+	{
+		if (users[id] != undefined)
+			users[id].activate(false);
+		users[newID].activate(true);
+		id = newID;
 	}
 	this.writeMessage = function(pseudo, message, color = "white")
 	{
