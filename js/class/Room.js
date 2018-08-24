@@ -16,7 +16,6 @@ var Room = function(name, password = undefined)
 		TODO: 	- Count rounds
 				- Maybe a little pause between each round ?
 				- Card redistribution between rounds
-				- Fiw the waiter multiplication bug
 	*/
 	var appendWaiters = function()
 	{
@@ -82,12 +81,6 @@ var Room = function(name, password = undefined)
 			waiter: false
 		};
 
-		if (gameStarted) {
-			if (players.length <= 1) {
-				gameStarted = false;
-				appendWaiters();
-			}
-		}
 		if (output.indexToRemove != -1)
 			players.splice(output.indexToRemove, 1);
 		else {
@@ -95,8 +88,14 @@ var Room = function(name, password = undefined)
 			output.indexToRemove = players.length - 1 + waiters.indexOf(socket);
 			waiters.splice(output.indexToRemove - players.length);
 		}
-		if (gameStarted)
+		if (gameStarted) {
+			if (players.length <= 1) {
+				gameStarted = false;
+				if (players.length >= 2)
+					round.restart();
+			}
 			output.currentPlayer = round.forceChangeCurrentPlayer();
+		}
 		output.playersNumber = players.length;
 		self.broadcast("Room:leave", output);
 		console.log("User " + socket.pseudo + " leaved the room " + self.name + ".");

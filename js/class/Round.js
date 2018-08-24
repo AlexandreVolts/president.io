@@ -159,8 +159,7 @@ var Round = function(room, players)
 		output.score = socket.score;
 		room.broadcast("Game:player_end", output);
 		if (enders >= players.length - 1) {
-			clearTimeout(timeout);
-			room.startRound();
+			self.restart();
 		}
 		return (enders >= players.length - 1);
 	}
@@ -192,6 +191,11 @@ var Round = function(room, players)
 		if (currentPlayer >= players.length)
 			currentPlayer = 0;
 		return (currentPlayer);
+	}
+	this.restart = function()
+	{
+		clearTimeout(timeout);
+		room.startRound();
 	}
 	initialise();
 }

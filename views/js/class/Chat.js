@@ -1,16 +1,28 @@
-var Chat = function()
+var Chat = function(socket)
 {
 	var self = this;
 	var container = document.getElementById("chat");
 	var textBox = document.getElementById("textBox");
 	var chatHeader = document.getElementById("chatHeader");
+	var chatInput = document.getElementById("chatInput");
 	var users = [];
 	var id = 0;
 	
+	var sendMessage = function(event)
+	{
+		if (event.key == "Enter" || event.code == "Enter" || event.which == 13) {
+			if (chatInput.value.length >= 3) {
+				console.log(chatInput.value);
+				socket.emit("Chat:message", {content: chatInput.value});
+				chatInput.value = "";
+			}
+		}
+	}
+
 	this.resize = function()
 	{
 		container.style.height = window.innerHeight + "px";
-		textBox.style.height = (window.innerHeight - chatHeader.offsetHeight - 5) + "px";
+		textBox.style.height = (window.innerHeight - chatHeader.offsetHeight - chatInput.offsetHeight - 5) + "px";
 	}
 	this.addUser = function(pseudo, score = 0)
 	{
@@ -28,6 +40,8 @@ var Chat = function()
 	}
 	this.activate = function(newID)
 	{
+		if (newID == undefined)
+			return;
 		if (users[id] != undefined)
 			users[id].activate(false);
 		users[newID].activate(true);
@@ -58,4 +72,5 @@ var Chat = function()
 		return (users[id]);
 	}
 	window.addEventListener("resize", self.resize);
+	chatInput.addEventListener("keydown", sendMessage);
 }

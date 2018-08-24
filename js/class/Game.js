@@ -35,6 +35,17 @@ var Game = function()
 		});
 		rooms.splice(index, 1);
 	}
+	this.getRandomPublicRoom = function()
+	{
+		let publicRooms = rooms.filter(function(room)
+		{
+			return (room.getPassword() == undefined);
+		});
+
+		if (publicRooms.length == 0)
+			return (undefined);
+		return (publicRooms[Math.floor(Math.random() * publicRooms.length)].name);
+	}
 	this.getRoom = function(name)
 	{
 		let output = rooms.find(function(room)

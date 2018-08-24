@@ -40,12 +40,23 @@ canvas {
 	border-bottom: 1px dotted white;
 	margin-bottom: 5px;
 }
-#textBox {
-	overflow-y: auto;
-}
 .active {
 	border-radius: 5px 0px 5px 5px;
 	animation: activateAnimation 2s ease-in-out alternate infinite;
+}
+#textBox {
+	overflow-y: auto;
+}
+#chatInput {
+	position: absolute;
+	right: 0;
+	bottom: 0;
+	padding: 3px;
+	min-width: 200px;
+	width: 20%;
+	background-image: linear-gradient(transparent, black);
+	background-color: rgb(50, 25, 25);
+	text-align: left;
 }
 footer form {
 	background-color: rgba(0, 0, 0, 0.75);
@@ -53,12 +64,16 @@ footer form {
 	color: white;
 	padding: 10px;
 	position: absolute;
-	top: 0%;
+	top: 0;
 	width: 250px;
 	z-index: 10;
 }
 #hiddenHoverButton:hover {
 	width: 25%;
+}
+#chatInput:hover, #chatInput:focus {
+	width: 20%;
+	background-color: darkred;
 }
 @keyframes activateAnimation {
 	0% {

@@ -1,22 +1,51 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<title></title>
+		<title>president.io</title>
 		<meta charset="utf-8" />
+		<meta name="description" content="An online version of the president/daifugo card game." />
+		<meta name="author" content="Alexandre Cochet, known as Alexandre Volts" />
 		<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
 		<link rel="stylesheet" type="text/css" href="/css/fonts.css" />
 		<link rel="stylesheet" type="text/css" href="/css/style.css" />
+		<link rel="stylesheet" type="text/css" href="/css/index.css" />
+		<link rel="stylesheet" type="text/css" href="/css/footer.css" />
 	</head>
 	<body>
 		<header>
 			<h1>president.io</h1>
 		</header>
 		<section>
-			<form method="post" action="/create">
-				<input type="text" name="name" placeholder="Room name" pattern="[a-zA-Z\d]{2,20}" title="Only letters and digits are supported." required />
-				<input type="password" name="password" placeholder="Password (for privates rooms only)" minlength="2" />
-				<input type="submit" value="Créer" />
-			</form>
+			<article>
+				<h2>Create</h2>
+				<form method="post" action="/create">
+					<input type="text" name="name" placeholder="Room name" pattern="[a-zA-Z\d]{2,20}" title="Only letters and digits are supported." required />
+					<input type="password" name="password" placeholder="Password (for privates rooms only)" minlength="2" />
+					<input type="submit" value="Create !" />
+				</form>
+			</article>
+			<article>
+				<h2>Join</h2>
+				<form method="post" action="/join">
+					<input type="text" name="name" placeholder="Room name" pattern="[a-zA-Z\d]{2,20}" title="Only letters and digits are supported." required />
+					<input type="submit" value="Join !" />
+				</form>
+				<p>Or...</p>
+				<form method="post" action="/random">
+					<input type="submit" value="Join a random public room !" />
+				</form>
+			</article>
 		</section>
+		<footer>
+			<div id="cookies">
+				<p>This website doesn't uses cookies. You're unlucky.</p>
+				<button>Ok... but I was hungry...</button>
+			</div>
+			<ul id="footerNav">
+				<li><a href="#">Informations about this website</a></li>
+				<li><a href="#">Another random link</a></li>
+			</ul>
+		</footer>
+		<script type="text/javascript" src="/js/src/manageCookies.js"></script>
 	</body>
 </html>

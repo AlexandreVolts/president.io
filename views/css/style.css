@@ -13,12 +13,24 @@ form {
 	margin: auto;
 	width: 50%;
 }
-h1 {
-	color: red;
-	font-family: "Budmo Jiggler";
-	font-size: 90px;
+h1, h2 {
 	text-align: center;
 	text-shadow: 0px 0px 20px black;
+}
+h1 {
+	font-family: "Budmo Jiggler";
+	color: red;
+	font-size: 90px;
+}
+h2 {
+	font-family: "Budmo Jiggler";
+	font-size: 30px;
+	color: white;
+}
+a {
+	color: red;
+	text-decoration: none;
+	transition: text-shadow 0.25s;
 }
 input, button {
 	background-image: linear-gradient(rgb(50, 25, 25), transparent);
@@ -34,12 +46,11 @@ input, button {
 	text-align: center;
 	text-shadow: 0px 0px 20px black;
 	width: 25%;
-	transition: background-color 0.5s, width 0.75s;
+	transition: background-color 0.5s, width 0.6s;
 }
 input[type="submit"], button {
 	background-image: linear-gradient(transparent, black);
 	background-color: rgb(50, 25, 25);
-	transition: background-color 1s, width 0.75s;
 }
 input:focus {
 	background-color: transparent;
@@ -48,4 +59,7 @@ input:focus {
 input[type="submit"]:hover, button:hover {
 	background-color: darkred;
 	width: 50%;
+}
+a:hover {
+	text-shadow: 0px 0px 10px red;
 }

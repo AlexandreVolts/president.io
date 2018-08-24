@@ -1,7 +1,7 @@
 var SocketManager = function(socket, game)
 {
 	var playersNumber = 0;
-	var chat = new Chat();
+	var chat = new Chat(socket);
 	var form = new Form(socket, chat);
 	var musicPlayer = new MusicPlayer();
 
@@ -52,6 +52,10 @@ var SocketManager = function(socket, game)
 				game.getHand().isPlayerTurn = (datas.currentPlayer == datas.index);
 			}
 		}
+	}
+	var manageNewMessage = function(datas)
+	{
+		chat.writeMessage(datas.pseudo + ":", datas.content, "yellow");
 	}
 	var manageHand = function(datas)
 	{
@@ -130,6 +134,7 @@ var SocketManager = function(socket, game)
 	}
 	socket.on("Room:join", manageUserEvents);
 	socket.on("Room:leave", manageUserEvents);
+	socket.on("Chat:message", manageNewMessage);
 	socket.on("Game:send_hand", manageHand);
 	socket.on("Game:round_start", manageStart);
 	socket.on("Game:update", updateGame);

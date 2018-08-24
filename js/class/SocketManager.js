@@ -12,6 +12,10 @@ var SocketManager = function(server, game)
 		{
 			getLoginInfos(datas, socket);
 		});
+		socket.on("Chat:message", function(datas)
+		{
+			broadcastMessage(datas, socket);
+		});
 		socket.on("Game:send_cards", function(datas)
 		{
 			getSendedCards(datas, socket);
@@ -32,8 +36,6 @@ var SocketManager = function(server, game)
 			output.message = "Room doesn't exists.";
 		else if (datas.pseudo.length < 2 || datas.pseudo.length > 15)
 			output.message = "Invalid username length.";
-		else if (password !== room.getPassword())
-			output.message = "Invalid password.";
 		else {
 			output.valid = true;
 			output.players = room.getFormattedPlayersInfos();
@@ -44,6 +46,16 @@ var SocketManager = function(server, game)
 		socket.emit("Login:send_status", output);
 		if (output.valid)
 			room.addUser(socket);
+	}
+	var broadcastMessage = function(datas, socket)
+	{
+		let room = game.getRoom(socket.room);
+		let output = {
+			pseudo: socket.pseudo,
+			content: datas.content
+		};
+
+		room.broadcast("Chat:message", output);
 	}
 	var checkCards = function(hand, cards)
 	{

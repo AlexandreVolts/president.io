@@ -25,6 +25,8 @@ var Server = function(port)
 		});
 		app.get("/room/:name", manageUserInRoom);
 		app.post("/create", manageRoomCreation);
+		app.post("/join", manageUserJoin);
+		app.post("/random", sendUserInRandomRoom);
 		app.use(function(req, res, next)
 		{
 			res.setHeader("Content-Type", "text/plain");
@@ -33,10 +35,8 @@ var Server = function(port)
 	}
 	var manageRoomCreation = function(req, res)
 	{
-		if (game.addRoom(req.body))
-			res.redirect("/room/" + req.body.name);
-		else
-			res.redirect("/");
+		game.addRoom(req.body);
+		res.redirect("/room/" + req.body.name);
 	}
 	var manageUserInRoom = function(req, res)
 	{
@@ -46,6 +46,20 @@ var Server = function(port)
 			res.sendFile(path.resolve(DIR + "game.html"));
 		else
 			res.redirect("/");
+	}
+	var manageUserJoin = function(req, res)
+	{
+		console.log(req.params.name);
+		res.redirect("/room/" + req.body.name);
+	}
+	var sendUserInRandomRoom = function(req, res)
+	{
+		let roomName = game.getRandomPublicRoom();
+		
+		if (roomName != undefined)
+			res.redirect("/room/" + roomName);
+		else
+			res.sendFile(path.resolve(DIR + "random.html"));
 	}
 }
 module.exports = Server;

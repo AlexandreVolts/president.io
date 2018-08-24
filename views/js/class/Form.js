@@ -12,15 +12,20 @@ var Form = function(socket, chat)
 
 	section.removeChild(canvas);
 	section.removeChild(chatContainer);
-	var sendLoginInfos = function()
+	var getRoomName = function()
 	{
 		const URL_SEPARATOR = "room/";
-		var output = {};
 		var index = url.indexOf(URL_SEPARATOR) + URL_SEPARATOR.length;
+
+		return (url.substr(index, url.length));
+	}
+	var sendLoginInfos = function()
+	{
+		var output = {};
 
 		output.pseudo = inputs[0].value;
 		output.password = inputs[1].value;
-		output.roomName = url.substr(index, url.length);
+		output.roomName = getRoomName();
 		document.title = output.roomName + " - president.io";
 		socket.emit("Login:send_infos", output);
 	}
@@ -39,6 +44,7 @@ var Form = function(socket, chat)
 		});
 		socket.index = datas.players.length;
 	}
+	document.getElementsByTagName("h2")[0].textContent = getRoomName();
 	button.addEventListener("click", sendLoginInfos);
 	socket.on("Login:send_status", getLoginStatus);
 }

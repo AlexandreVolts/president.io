@@ -11,10 +11,11 @@
 	<body>
 		<header>
 			<h1>president.io</h1>
+			<h2></h2>
 			<form id="login">
-				<input type="text" name="pseudo" placeholder="Pseudo" minlength="2" maxlength="15" required />
-				<input type="password" name="password" placeholder="Mot de passe (optionnel)" />
-				<button type="button">Se connecter</button>
+				<input type="text" name="pseudo" placeholder="Nickname" minlength="2" maxlength="15" required />
+				<input type="password" name="password" placeholder="Password (private rooms only)" />
+				<button type="button">Connect me !</button>
 			</form>
 			<p id="loginError"></p>
 		</header>
@@ -25,7 +26,7 @@
 					
 				</div>
 				<div id="textBox">
-					
+					<input id="chatInput" type="text" name="chatInput" placeholder="Type your message here" />
 				</div>
 				<button id="hiddenMiddleButton"></button>
 			</article>
