@@ -5,7 +5,7 @@ var SocketManager = function(socket, game)
 	var form = new Form(socket, chat);
 	var musicPlayer = new MusicPlayer();
 
-	musicPlayer.changeMusic(SYS.Music.WAITING_THEME);
+	musicPlayer.changeMusic(SYS.Music.PATH + SYS.Music.WAITING_THEME);
 	var sortCards = function(array)
 	{
 		var cardMin;
@@ -35,6 +35,24 @@ var SocketManager = function(socket, game)
 		if (place == 3)
 			return ("rd");
 		return ("th");
+	}
+	var getRole = function(place)
+	{
+		let statut = "";
+
+		if (place <= playersNumber / 2) {
+			for (var i = playersNumber / 2 - (place - 1); i < playersNumber / 2; i++)
+				statut += "vice-";
+			statut += "president";
+		}
+		if (place > playersNumber / 2) {
+			for (var i = place; i < playersNumber; i++)
+				statut += "vice-";
+			statut += "looser";
+		}
+		if (place == playersNumber / 2 + 0.5)
+			statut = "neutral";
+		return (statut);
 	}
 	var manageUserEvents = function(datas)
 	{
@@ -76,7 +94,7 @@ var SocketManager = function(socket, game)
 		}
 		chat.resize();
 		chat.activate(datas.starter);
-		musicPlayer.changeMusic(SYS.Music.IN_GAME_THEME);
+		musicPlayer.changeMusic(SYS.Music.PATH + SYS.Music.IN_GAME_THEME);
 	}
 	var updateGame = function(datas)
 	{
@@ -118,13 +136,13 @@ var SocketManager = function(socket, game)
 		var hand = game.getHand();
 
 		chat.getUser(datas.enderIndex).update(datas.score);
+		chat.getUser(datas.enderIndex).setRole(getRole(datas.place));
 		chat.writeMessage(datas.pseudo, " is the " + suffix + " to end !", "lime");
 		chat.resize();
-		if (datas.place >= playersNumber - 1) {
+		if (datas.place >= playersNumber) {
 			hand.getMiddle().clear();
 			hand.revolution = false;
 			game.timer = undefined;
-			chat.writeMessage("", "There is only one in-game player. New Round starts.", "red");
 		}
 	}
 	

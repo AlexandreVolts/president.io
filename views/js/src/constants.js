@@ -19,5 +19,9 @@ const SYS = {
 		PATH: "/assets/musics/",
 		WAITING_THEME: "Casino Calavera.flac",
 		IN_GAME_THEME: "All That.mp3"
+	},
+	Fx: {
+		PATH: "/assets/fx/",
+		CARDS_SOUNDS: ["cardPlace1.ogg", "cardPlace2.ogg", "cardPlace3.ogg", "cardPlace4.ogg"]
 	}
 };

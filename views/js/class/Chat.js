@@ -53,7 +53,7 @@ var Chat = function(socket)
 
 		p.style.color = color;
 		p.innerHTML = "<strong>" + pseudo + "</strong> ";
-		p.innerHTML += message;
+		p.textContent += message;
 		textBox.appendChild(p);
 		textBox.scrollTop = textBox.scrollHeight;
 	}

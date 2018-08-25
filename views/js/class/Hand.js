@@ -1,6 +1,6 @@
 const CARDS_PATH = SYS.IMG_PATH + SYS.CARDS_TILESET_NAME;
 
-var Hand = function(canvas)
+var Hand = function(canvas, soundPlayer)
 {
 	var self = this;
 	var cardsTileset = new Tileset(CARDS_PATH, SYS.CARDS_COL_NBR, SYS.CARDS_ROW_NBR);
@@ -53,6 +53,12 @@ var Hand = function(canvas)
 		mousePosition.x = event.changedTouches[0].pageX;
 		mousePosition.y = event.changedTouches[0].pageY;
 		mouseClicked = event.type === "touchstart";
+	}
+	var onClickOnCard = function(position)
+	{
+		animatedCard.origin = position;
+		soundPlayer.playRandomMusic(SYS.Fx.PATH, SYS.Fx.CARDS_SOUNDS);
+		delay.restart();
 	}
 	var checkMousePosition = function(pos)
 	{
@@ -123,8 +129,7 @@ var Hand = function(canvas)
 				position.y -= SYS.PADDING;
 				additionalCondition = (middle.selected.length < 4 && mouseClicked);
 				if (pushCards(middle.selected, self.cards, i, additionalCondition)) {
-					animatedCard.origin = position;
-					delay.restart();
+					onClickOnCard(position);
 					continue;
 				}
 			}
@@ -146,8 +151,7 @@ var Hand = function(canvas)
 			if (checkMousePosition(position)) {
 				position.y -= SYS.PADDING / 2;
 				if (isSelectedArray && pushCards(self.cards, middle.selected, i, mouseClicked)) {
-					animatedCard.origin = position;
-					delay.restart();
+					onClickOnCard(position);
 					continue;
 				}
 			}

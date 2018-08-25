@@ -49,7 +49,6 @@ var Server = function(port)
 	}
 	var manageUserJoin = function(req, res)
 	{
-		console.log(req.params.name);
 		res.redirect("/room/" + req.body.name);
 	}
 	var sendUserInRandomRoom = function(req, res)

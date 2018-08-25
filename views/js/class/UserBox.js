@@ -39,4 +39,8 @@ var UserBox = function(container, pseudo)
 	{
 		container.removeChild(inner);
 	}
+	this.setRole = function(role)
+	{
+		title.innerHTML = "<em>[" + role + "]</em> " + pseudo;
+	}
 }

@@ -91,10 +91,11 @@ var Room = function(name, password = undefined)
 		if (gameStarted) {
 			if (players.length <= 1) {
 				gameStarted = false;
-				if (players.length >= 2)
-					round.restart();
+				round.destroy();
+				round = undefined;
 			}
-			output.currentPlayer = round.forceChangeCurrentPlayer();
+			else
+				output.currentPlayer = round.updateCurrentPlayer(-1);
 		}
 		output.playersNumber = players.length;
 		self.broadcast("Room:leave", output);

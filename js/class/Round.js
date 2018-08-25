@@ -106,15 +106,7 @@ var Round = function(room, players)
 		};
 		
 		output.currentPlayer = currentPlayer;
-		do {
-			currentPlayer++;
-			if (currentPlayer >= players.length)
-				currentPlayer = 0;
-		} while (players[currentPlayer].place != -1);
-		clearTimeout(timeout);
-		timeout = setTimeout(function() {
-			self.computeTurn(players[currentPlayer], []);
-		}, 1000 * DELAY);
+		self.updateCurrentPlayer();
 		output.nextPlayerId = currentPlayer;
 		room.broadcast("Game:update", output);
 		socket.emit("Game:update_hand", {hand: socket.hand});
@@ -158,7 +150,9 @@ var Round = function(room, players)
 		passed--;
 		output.score = socket.score;
 		room.broadcast("Game:player_end", output);
-		if (enders >= players.length - 1) {
+		if (enders == players.length - 1) {
+			self.updateCurrentPlayer();
+			managePlayerEnd(players[currentPlayer], currentPlayer);
 			self.restart();
 		}
 		return (enders >= players.length - 1);
@@ -186,15 +180,27 @@ var Round = function(room, players)
 			reset();
 		return (true);
 	}
-	this.forceChangeCurrentPlayer = function()
+	this.updateCurrentPlayer = function(move = 0)
 	{
-		if (currentPlayer >= players.length)
-			currentPlayer = 0;
+		currentPlayer += move;
+		do {
+			currentPlayer++;
+			if (currentPlayer >= players.length)
+				currentPlayer = 0;
+		} while (players[currentPlayer].place != -1);
+		clearTimeout(timeout);
+		timeout = setTimeout(function() {
+			self.computeTurn(players[currentPlayer], []);
+		}, 1000 * DELAY);
 		return (currentPlayer);
+	}
+	this.destroy = function()
+	{
+		clearTimeout(timeout);
 	}
 	this.restart = function()
 	{
-		clearTimeout(timeout);
+		self.destroy();
 		room.startRound();
 	}
 	initialise();

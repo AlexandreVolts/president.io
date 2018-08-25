@@ -6,6 +6,9 @@ canvas {
 	position: relative;
 	z-index: 2;
 }
+em {
+	color: yellow;
+}
 #middleButton, #hiddenMiddleButton {
 	position: absolute;
 	height: 50px;
@@ -17,11 +20,11 @@ canvas {
 	z-index: 3;
 }
 #chat {
-	background-color: rgba(0, 0, 0, 0.75);
-	box-shadow: -5px 0px 10px black;
-	color: white;
 	min-width: 200px;
 	width: 20%;
+	background-color: rgba(0, 0, 0, 0.75);
+	color: white;
+	box-shadow: -5px 0px 10px black;
 }
 #chat img {
 	width: 20px;
@@ -51,7 +54,6 @@ canvas {
 	position: absolute;
 	right: 0;
 	bottom: 0;
-	padding: 3px;
 	min-width: 200px;
 	width: 20%;
 	background-image: linear-gradient(transparent, black);

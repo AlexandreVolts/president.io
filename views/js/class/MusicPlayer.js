@@ -1,5 +1,7 @@
 var MusicPlayer = function()
 {
+	var self = this;
+	var soundStorage = [];
 	var sound;
 	var volumeController = document.getElementById("musicVolume");
 
@@ -15,8 +17,25 @@ var MusicPlayer = function()
 	{
 		if (sound != undefined)
 			sound.stop();
-		sound = new Sound(SYS.Music.PATH + src);
+		sound = soundStorage.find(function(soundObj)
+		{
+			return (soundObj.src === src);
+		});
+		if (sound == undefined) {
+			sound = new Sound(src);
+			soundStorage.push({});
+			soundStorage[soundStorage.length - 1].src = src;
+			soundStorage[soundStorage.length - 1].sound = sound;
+		}
+		else
+			sound = sound.sound;
 		sound.setVolume(volumeController.value / 100);
 		sound.play();
+	}
+	this.playRandomMusic = function(folder, srcArray)
+	{
+		var choosenSound = srcArray[Math.floor(Math.random() * srcArray.length)];
+
+		self.changeMusic(folder + choosenSound);
 	}
 }
