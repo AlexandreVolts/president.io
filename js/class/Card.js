@@ -12,7 +12,7 @@ Card.indexOf = function(array, card)
 
 	for (let i = 0, len = array.length; i < len; i++) {
 		if (array[i].value == card.value
-			&& array[i].strength == card.strength
+			&& array[i].name == card.name
 			&& array[i].color == card.color) {
 			output = i;
 			break;
@@ -24,8 +24,9 @@ Card.getPattern = function(cards)
 {
 	let output = "";
 	
-	for (let i = 0, len = cards.length; i < len; i++) 
+	for (let i = 0, len = cards.length; i < len; i++) {
 		output += cards[i].strength - cards[0].strength;
+	}
 	return (output);
 }
 module.exports = Card;

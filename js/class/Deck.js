@@ -26,6 +26,11 @@ var Deck = function()
 			}
 		}
 	}
+	this.addJokers = function(n = 2)
+	{
+		for (let i = 0; i < n; i++)
+			cards.push(new Card("Joker", NAMES.length, NAMES.length, 0));
+	}
 	this.distribute = function(nbPlayers)
 	{
 		let output = new Array(nbPlayers);

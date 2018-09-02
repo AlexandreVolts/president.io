@@ -12,11 +12,6 @@ var Room = function(name, password = undefined)
 	
 	this.name = name;
 
-	/*
-		TODO: 	- Count rounds
-				- Maybe a little pause between each round ?
-				- Card redistribution between rounds
-	*/
 	var appendWaiters = function()
 	{
 		players = players.concat(waiters);
@@ -35,10 +30,6 @@ var Room = function(name, password = undefined)
 		currentRound++;
 		round = new Round(self, players);
 		gameStarted = true;
-		players.forEach(function(socket)
-		{
-			socket.place = -1;
-		});
 	}
 	this.broadcast = function(event, datas)
 	{
@@ -85,8 +76,8 @@ var Room = function(name, password = undefined)
 			players.splice(output.indexToRemove, 1);
 		else {
 			output.waiter = true;
-			output.indexToRemove = players.length - 1 + waiters.indexOf(socket);
-			waiters.splice(output.indexToRemove - players.length);
+			output.indexToRemove = players.length + waiters.indexOf(socket);
+			waiters.splice(waiters.indexOf(socket), 1);
 		}
 		if (gameStarted) {
 			if (players.length <= 1) {
@@ -111,6 +102,12 @@ var Room = function(name, password = undefined)
 				score: socket.score
 			});
 		});
+		waiters.forEach(function(socket) {
+			output.push({
+				pseudo: socket.pseudo,
+				score: 0
+			});
+		})
 		return (output);
 	}
 	this.getPassword = function()

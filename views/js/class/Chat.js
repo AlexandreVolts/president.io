@@ -12,7 +12,6 @@ var Chat = function(socket)
 	{
 		if (event.key == "Enter" || event.code == "Enter" || event.which == 13) {
 			if (chatInput.value.length >= 3) {
-				console.log(chatInput.value);
 				socket.emit("Chat:message", {content: chatInput.value});
 				chatInput.value = "";
 			}

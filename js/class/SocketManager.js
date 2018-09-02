@@ -19,7 +19,7 @@ var SocketManager = function(server, game)
 		});
 		socket.on("Game:send_cards", function(datas)
 		{
-			getSendedCards(datas, socket);
+			getSentCards(datas, socket);
 		});
 		socket.on("disconnect", function()
 		{
@@ -45,6 +45,7 @@ var SocketManager = function(server, game)
 			socket.pseudo = datas.pseudo;
 			socket.room = room.name;
 			socket.score = 0;
+			socket.place = -1;
 		}
 		socket.emit("Login:send_status", output);
 		if (output.valid)
@@ -64,7 +65,7 @@ var SocketManager = function(server, game)
 	{
 		let output = true;
 		
-		if (!Array.isArray(cards))
+		if (!Array.isArray(cards) || cards.length > 4)
 			return (false);
 		cards.forEach(function(card) {
 			if (Card.indexOf(hand, card) == -1)
@@ -72,15 +73,18 @@ var SocketManager = function(server, game)
 		});
 		return (output);
 	}
-	var getSendedCards = function(datas, socket)
+	var getSentCards = function(datas, socket)
 	{
 		let room = game.getRoom(socket.room);
 		let round;
 
 		if (room != undefined && checkCards(socket.hand, datas.cards)) {
 			round = room.getRound();
-			if (round != undefined)
+			if (round != undefined) {
 				round.computeTurn(socket, datas.cards);
+				if (round.isEnded())
+					room.startRound();
+			}
 		}
 	}
 	var onDisconnect = function(socket)

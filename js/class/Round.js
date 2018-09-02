@@ -1,3 +1,4 @@
+const Redistributor = require("./Redistributor.js");
 const Deck = require("./Deck.js");
 const Card = require("./Card.js");
 const POSSIBLE_PATTERNS = ["0", "00", "000", "0000", "012", "0123"];
@@ -14,14 +15,16 @@ var Round = function(room, players)
 	let enders = 0;
 	let timeout;
 	let revolution = false;
+	let redistributor = new Redistributor(players);
 
-	var initialise = function()
+	let initialise = function()
 	{
 		let hands;
 		let output = {};
 		let broadcastOutput = {};
 		
 		deck.generate();
+		deck.addJokers(0);
 		hands = deck.distribute(players.length);
 		broadcastOutput.cardsNbr = new Array(players.length);
 		for (let i = 0, l = hands.length; i < l; i++) {
@@ -30,12 +33,16 @@ var Round = function(room, players)
 			broadcastOutput.cardsNbr[i] = hands[i].length;
 			players[i].emit("Game:send_hand", output);
 		}
-		currentPlayer = Math.floor(Math.random() * players.length);
-		broadcastOutput.starter = currentPlayer;
-		broadcastOutput.starterPseudo = players[currentPlayer].pseudo;
-		room.broadcast("Game:round_start", broadcastOutput);
+		//if (!redistributor.initialise(players)) {
+			start(broadcastOutput);
+		/*}
+		else {
+			timeout = setTimeout(function() {
+				start(broadcastOutput);
+			}, 1000 * DELAY);
+		}*/
 	}
-	var reset = function()
+	let reset = function()
 	{
 		let output = {};
 		
@@ -46,7 +53,24 @@ var Round = function(room, players)
 		output.currentPlayer = currentPlayer;
 		room.broadcast("Game:new_turn", output);
 	}
-	var reverseCardOrder = function()
+	let start = function(output)
+	{
+		let index = Math.floor(Math.random() * players.length);
+		let max = -1;
+		
+		for (let i = 0, len = players.length; i < len; i++) {
+			if (players[i].place > max) {
+				index = i;
+				max = players[i].place;
+			}
+			players[i].place = -1;
+		}
+		currentPlayer = index;
+		output.starter = currentPlayer;
+		output.starterPseudo = players[currentPlayer].pseudo;
+		room.broadcast("Game:round_start", output);
+	}
+	let reverseCardOrder = function()
 	{
 		if (pattern === "0000") {
 			revolution = !revolution;
@@ -56,7 +80,7 @@ var Round = function(room, players)
 			});
 		}
 	}
-	var setNewPattern = function(cards)
+	let setNewPattern = function(cards)
 	{
 		let output = false;
 		let cardsPattern = Card.getPattern(cards);
@@ -71,7 +95,7 @@ var Round = function(room, players)
 		reverseCardOrder();
 		return (output);
 	}
-	var checkPattern = function(cards)
+	let checkPattern = function(cards)
 	{
 		if (pattern == undefined) {
 			return (setNewPattern(cards));
@@ -87,7 +111,7 @@ var Round = function(room, players)
 		reverseCardOrder();
 		return (pattern === Card.getPattern(cards));
 	}
-	var computeScore = function()
+	let computeScore = function()
 	{
 		let output = 0;
 
@@ -97,7 +121,7 @@ var Round = function(room, players)
 		});
 		return (output);
 	}
-	var changeCurrentPlayer = function(socket, cards)
+	let changeCurrentPlayer = function(socket, cards)
 	{
 		let output = {
 			pseudo: socket.pseudo,
@@ -111,7 +135,7 @@ var Round = function(room, players)
 		room.broadcast("Game:update", output);
 		socket.emit("Game:update_hand", {hand: socket.hand});
 	}
-	var changeTurn = function(socket, cards)
+	let changeTurn = function(socket, cards)
 	{
 		let save = currentPlayer;
 		let tmp;
@@ -123,8 +147,8 @@ var Round = function(room, players)
 		});
 		changeCurrentPlayer(socket, cards);
 		if (cards.length > 0) {
-			if ((cards[cards.length - 1].value == 1 && !revolution) 
-				|| (cards[cards.length - 1].value == 2 && revolution)) {
+			if ((cards[cards.length - 1].strength == 12 && !revolution) 
+				|| (cards[cards.length - 1].strength == 0 && revolution)) {
 				tmp = currentPlayer;
 				currentPlayer = save;
 				reset();
@@ -136,7 +160,7 @@ var Round = function(room, players)
 				currentPlayer = tmp;
 		}
 	}
-	var managePlayerEnd = function(socket, id)
+	let managePlayerEnd = function(socket, id)
 	{
 		let output = {
 			pseudo: socket.pseudo,
@@ -153,7 +177,6 @@ var Round = function(room, players)
 		if (enders == players.length - 1) {
 			self.updateCurrentPlayer();
 			managePlayerEnd(players[currentPlayer], currentPlayer);
-			self.restart();
 		}
 		return (enders >= players.length - 1);
 	}
@@ -194,14 +217,13 @@ var Round = function(room, players)
 		}, 1000 * DELAY);
 		return (currentPlayer);
 	}
-	this.destroy = function()
+	this.isEnded = function()
 	{
-		clearTimeout(timeout);
-	}
-	this.restart = function()
-	{
-		self.destroy();
-		room.startRound();
+		if (enders == players.length) {
+			clearTimeout(timeout);
+			return (true);
+		}
+		return (false);
 	}
 	initialise();
 }
