@@ -97,15 +97,19 @@ var Round = function(room, players)
 	}
 	let checkPattern = function(cards)
 	{
+		let cardId = 0;
+		
 		if (pattern == undefined) {
 			return (setNewPattern(cards));
 		}
+		if (revolution && playedCards.length > 1)
+			cardId = playedCards.length - 2;
 		if (!revolution) {
-			if (cards[0].strength <= playedCards[0].strength)
+			if (cards[0].strength <= playedCards[cardId].strength)
 				return (false);
 		}
 		else {
-			if (cards[0].strength >= playedCards[0].strength)
+			if (cards[0].strength >= playedCards[cardId].strength)
 				return (false);
 		}
 		reverseCardOrder();
@@ -219,7 +223,7 @@ var Round = function(room, players)
 	}
 	this.isEnded = function()
 	{
-		if (enders == players.length) {
+		if (enders == players.length || players.length <= 1) {
 			clearTimeout(timeout);
 			return (true);
 		}

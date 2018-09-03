@@ -23,6 +23,7 @@ var Deck = function()
 				if (strength < 0)
 					strength += NAMES.length;
 				cards.push(new Card(NAMES[i], i, strength, j));
+				cards.push(new Card(NAMES[i], i, strength, j));
 			}
 		}
 	}

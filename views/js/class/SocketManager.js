@@ -107,7 +107,7 @@ var SocketManager = function(socket, game)
 		else
 			game.timer = undefined;
 		if (datas.newCards.length > 0) {
-			hand.getMiddle().currentCards = datas.newCards;
+			hand.getMiddle().setCurrentCards(datas.newCards);
 			chat.writeMessage(datas.pseudo, " overbidden.");
 		}
 		else

@@ -80,9 +80,8 @@ var Room = function(name, password = undefined)
 			waiters.splice(waiters.indexOf(socket), 1);
 		}
 		if (gameStarted) {
-			if (players.length <= 1) {
+			if (round.isEnded()) {
 				gameStarted = false;
-				round.destroy();
 				round = undefined;
 			}
 			else

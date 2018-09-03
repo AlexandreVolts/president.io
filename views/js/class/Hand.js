@@ -107,12 +107,17 @@ var Hand = function(canvas, soundPlayer)
 	}
 	var drawHelper = function(ctx, strength)
 	{
-		if (middle.currentCards.length == 0) {
+		var currentCards = middle.getCurrentCards();
+		var cardId = 0;
+		
+		if (currentCards.length == 0) {
 			shade.draw(ctx);
 			return;
 		}
-		if ((!self.revolution && middle.currentCards[0].strength < strength)
-			|| (self.revolution && middle.currentCards[0].strength > strength))
+		if (self.revolution && currentCards.length > 1)
+			cardId = currentCards.length - 2;
+		if ((!self.revolution && currentCards[cardId].strength < strength)
+			|| (self.revolution && currentCards[cardId].strength >= strength))
 			shade.draw(ctx);
 	}
 	var drawHandCards = function(ctx)
@@ -146,6 +151,8 @@ var Hand = function(canvas, soundPlayer)
 		var position;
 		var time = delay.getElapsedTime();
 
+		if (!middle.allowDraw())
+			return;
 		for (var i = 0; i < array.length; i++) {
 			position = computePosition(i, rect);
 			if (checkMousePosition(position)) {
@@ -174,7 +181,7 @@ var Hand = function(canvas, soundPlayer)
 		rightPadding = (canvas.width - cardSize.x / 2);
 		middle.render(ctx, cardsTileset);
 		drawHandCards(ctx);
-		drawCardsOnMiddle(middle.currentCards, ctx, rect);
+		drawCardsOnMiddle(middle.getCurrentCards(), ctx, rect);
 		drawCardsOnMiddle(middle.selected, ctx, rect, true);
 		if (animatedCard)
 			drawAnimatedCard(ctx, rect);

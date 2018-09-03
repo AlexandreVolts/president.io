@@ -41,10 +41,15 @@ var Redistributor = function()
 				i = 0;
 			}
 		}
-		console.log(validPlayers.length);
 		if (validPlayers.length > 0)
 			return (true);
 		return (false);
+	}
+	this.prepareRedistribution = function()
+	{
+		for (let i = 0, len = validPlayers.length; i < len; i++) {
+			
+		}
 	}
 }
 
