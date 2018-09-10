@@ -11,7 +11,7 @@ var Chat = function(socket)
 	var sendMessage = function(event)
 	{
 		if (event.key == "Enter" || event.code == "Enter" || event.which == 13) {
-			if (chatInput.value.length >= 3) {
+			if (chatInput.value.length >= 2) {
 				socket.emit("Chat:message", {content: chatInput.value});
 				chatInput.value = "";
 			}
@@ -43,7 +43,8 @@ var Chat = function(socket)
 			return;
 		if (users[id] != undefined)
 			users[id].activate(false);
-		users[newID].activate(true);
+		if (newID >= 0 && newID < users.length)
+			users[newID].activate(true);
 		id = newID;
 	}
 	this.writeMessage = function(pseudo, message, color = "white")
@@ -52,7 +53,7 @@ var Chat = function(socket)
 
 		p.style.color = color;
 		p.innerHTML = "<strong>" + pseudo + "</strong> ";
-		p.textContent += message;
+		p.innerHTML += message;
 		textBox.appendChild(p);
 		textBox.scrollTop = textBox.scrollHeight;
 	}

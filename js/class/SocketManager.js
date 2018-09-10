@@ -59,6 +59,8 @@ var SocketManager = function(server, game)
 			content: datas.content
 		};
 
+		if (room == undefined)
+			return;
 		room.broadcast("Chat:message", output);
 	}
 	var checkCards = function(hand, cards)
@@ -81,7 +83,7 @@ var SocketManager = function(server, game)
 		if (room != undefined && checkCards(socket.hand, datas.cards)) {
 			round = room.getRound();
 			if (round != undefined) {
-				round.computeTurn(socket, datas.cards);
+				round.analyse(socket, datas.cards);
 				if (round.isEnded())
 					room.startRound();
 			}

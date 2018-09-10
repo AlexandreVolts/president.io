@@ -71,18 +71,33 @@ var SocketManager = function(socket, game)
 			}
 		}
 	}
-	var manageNewMessage = function(datas)
-	{
-		chat.writeMessage(datas.pseudo + ":", datas.content, "yellow");
-	}
 	var manageHand = function(datas)
 	{
+		game.getHand().clearSelected();
 		game.setHand(sortCards(datas.hand));
+	}
+	var manageNewMessage = function(datas)
+	{
+		chat.writeMessage(datas.pseudo + ":", datas.content.toLowerCase(), "yellow");
+	}
+	var manageRedistribution = function(datas)
+	{
+		chat.activate(-1);
+		for (var i = 0; i < playersNumber; i++) {
+			chat.getUser(i).showCards(0);
+		}
+		if (datas.nbCards > 0) {
+			game.timer = new Timer();
+			chat.writeImportantMessage("", "Please, give " + datas.nbCards + " card(s) to " + datas.opposite + ".", "pink");
+		}
+		else
+			chat.writeMessage("", "Cards will be redistributed.", "orange");
 	}
 	var manageStart = function(datas)
 	{
 		var hand = game.getHand();
 		
+		game.timer = undefined;
 		for (let i = 0, len = datas.cardsNbr.length; i < len; i++)
 			chat.getUser(i).showCards(datas.cardsNbr[i]);
 		hand.isPlayerTurn = (datas.starter == datas.index);
@@ -111,7 +126,7 @@ var SocketManager = function(socket, game)
 			chat.writeMessage(datas.pseudo, " overbidden.");
 		}
 		else
-			chat.writeMessage(datas.pseudo, " passed his turn.");
+			chat.writeMessage(datas.pseudo, " passed.");
 		chat.activate(datas.nextPlayerId);
 		chat.getUser(datas.currentPlayer).showCards(datas.handLength);
 	}
@@ -154,6 +169,7 @@ var SocketManager = function(socket, game)
 	socket.on("Room:leave", manageUserEvents);
 	socket.on("Chat:message", manageNewMessage);
 	socket.on("Game:send_hand", manageHand);
+	socket.on("Game:redistribute", manageRedistribution);
 	socket.on("Game:round_start", manageStart);
 	socket.on("Game:update", updateGame);
 	socket.on("Game:update_hand", manageHand);

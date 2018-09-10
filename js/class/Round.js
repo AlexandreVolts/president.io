@@ -16,6 +16,7 @@ var Round = function(room, players)
 	let timeout;
 	let revolution = false;
 	let redistributor = new Redistributor(players);
+	let isRedistributionActive = false;
 
 	let initialise = function()
 	{
@@ -33,14 +34,18 @@ var Round = function(room, players)
 			broadcastOutput.cardsNbr[i] = hands[i].length;
 			players[i].emit("Game:send_hand", output);
 		}
-		//if (!redistributor.initialise(players)) {
+		if (!redistributor.initialise(players)) {
 			start(broadcastOutput);
-		/*}
+		}
 		else {
+			isRedistributionActive = true;
+			room.broadcast("Game:redistribute", {nbCards: 0});
+			redistributor.prepare();
 			timeout = setTimeout(function() {
+				redistributor.force();
 				start(broadcastOutput);
 			}, 1000 * DELAY);
-		}*/
+		}
 	}
 	let reset = function()
 	{
@@ -58,6 +63,7 @@ var Round = function(room, players)
 		let index = Math.floor(Math.random() * players.length);
 		let max = -1;
 		
+		isRedistributionActive = false;
 		for (let i = 0, len = players.length; i < len; i++) {
 			if (players[i].place > max) {
 				index = i;
@@ -125,6 +131,28 @@ var Round = function(room, players)
 		});
 		return (output);
 	}
+	let computeTurn = function(socket, cards)
+	{
+		if (players[currentPlayer].id !== socket.id)
+			return (false);
+		if (cards.length > 0) {
+			if (!checkPattern(cards))
+				return (false);
+			passed = 0;
+			playedCards = cards;
+		}
+		else {
+			if (pattern == undefined)
+				return (false);
+			passed++;
+		}
+		changeTurn(socket, cards);
+		if (enders >= players.length - 1)
+			return (true);
+		if (passed >= players.length - enders - 1)
+			reset();
+		return (true);
+	}
 	let changeCurrentPlayer = function(socket, cards)
 	{
 		let output = {
@@ -152,7 +180,7 @@ var Round = function(room, players)
 		changeCurrentPlayer(socket, cards);
 		if (cards.length > 0) {
 			if ((cards[cards.length - 1].strength == 12 && !revolution) 
-				|| (cards[cards.length - 1].strength == 0 && revolution)) {
+				|| (cards[0].strength == 0 && revolution)) {
 				tmp = currentPlayer;
 				currentPlayer = save;
 				reset();
@@ -180,32 +208,18 @@ var Round = function(room, players)
 		room.broadcast("Game:player_end", output);
 		if (enders == players.length - 1) {
 			self.updateCurrentPlayer();
+			players[currentPlayer].hand = [];
 			managePlayerEnd(players[currentPlayer], currentPlayer);
 		}
 		return (enders >= players.length - 1);
 	}
 
-	this.computeTurn = function(socket, cards)
+	this.analyse = function(socket, cards)
 	{
-		if (players[currentPlayer].id !== socket.id)
-			return (false);
-		if (cards.length > 0) {
-			if (!checkPattern(cards))
-				return (false);
-			passed = 0;
-			playedCards = cards;
-		}
-		else {
-			if (pattern == undefined)
-				return (false);
-			passed++;
-		}
-		changeTurn(socket, cards);
-		if (enders >= players.length - 1)
-			return (true);
-		if (passed >= players.length - enders - 1)
-			reset();
-		return (true);
+		if (isRedistributionActive)
+			redistributor.updateHands(socket, cards);
+		else
+			computeTurn(socket, cards);
 	}
 	this.updateCurrentPlayer = function(move = 0)
 	{
@@ -217,7 +231,7 @@ var Round = function(room, players)
 		} while (players[currentPlayer].place != -1);
 		clearTimeout(timeout);
 		timeout = setTimeout(function() {
-			self.computeTurn(players[currentPlayer], []);
+			computeTurn(players[currentPlayer], []);
 		}, 1000 * DELAY);
 		return (currentPlayer);
 	}
