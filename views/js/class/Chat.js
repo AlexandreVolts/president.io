@@ -5,9 +5,12 @@ var Chat = function(socket)
 	var textBox = document.getElementById("textBox");
 	var chatHeader = document.getElementById("chatHeader");
 	var chatInput = document.getElementById("chatInput");
+	var visualText = document.createElement("h2");
 	var users = [];
 	var id = 0;
 	
+	visualText.id = "visualText";
+	container.appendChild(visualText);
 	var sendMessage = function(event)
 	{
 		if (event.key == "Enter" || event.code == "Enter" || event.which == 13) {
@@ -50,12 +53,16 @@ var Chat = function(socket)
 	this.writeMessage = function(pseudo, message, color = "white")
 	{
 		var p = document.createElement("p");
+		var content = "<strong>" + pseudo + "</strong> " + message;
 
 		p.style.color = color;
-		p.innerHTML = "<strong>" + pseudo + "</strong> ";
-		p.innerHTML += message;
+		p.innerHTML = content;
 		textBox.appendChild(p);
 		textBox.scrollTop = textBox.scrollHeight;
+		container.removeChild(visualText);
+		visualText.style.color = color;
+		visualText.innerHTML = content;
+		container.appendChild(visualText);
 	}
 	this.writeImportantMessage = function(pseudo, message, color = "white")
 	{

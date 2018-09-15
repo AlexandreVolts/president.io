@@ -21,6 +21,17 @@
 				<form method="post" action="/create">
 					<input type="text" name="name" placeholder="Room name" pattern="[a-zA-Z\d]{2,20}" title="Only letters and digits are supported." required />
 					<input type="password" name="password" placeholder="Password (for privates rooms only)" minlength="2" />
+					<button>Advanced options</button>
+					<div id="advancedOptions">
+						<div>
+							<label>Minimum number of players required to start</label>
+							<input type="number" name="minPlayers" value="4" min="3" max="6" />
+						</div>
+						<div>
+							<label>Maximum number of players</label>
+							<input type="number" name="maxPlayers" value="8" min="4" max="8" />
+						</div>
+					</div>
 					<input type="submit" value="Create !" />
 				</form>
 			</article>

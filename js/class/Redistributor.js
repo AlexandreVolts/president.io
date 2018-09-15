@@ -4,6 +4,8 @@ var Redistributor = function()
 {
 	let self = this;
 	let validPlayers;
+	let substract;
+	let initialLength;
 	
 	let computeNbCards = function(index)
 	{
@@ -34,17 +36,24 @@ var Redistributor = function()
 	let transfertCards = function(socket, cards, isWinner = true)
 	{
 		let index;
-		let target = validPlayers[(validPlayers.length - 1) - socket.place];
+		let opposite = (validPlayers.length - 1);
+		let target;
 		let len = cards.length;
-		
+
+		if (!isWinner)
+			opposite -= (socket.place - substract);
+		else
+			opposite -= socket.place;
+		target = validPlayers[opposite];
 		for (let i = len - 1; i >= 0; i--) {
 			index = Card.indexOf(socket.hand, cards[i]);
-			if (!isWinner && socket.hand[index].strength < getStrongestCard(socket.hand).strength)
-				return;
-			if (index != -1)
+			if (index != -1) {
+				if (!isWinner && socket.hand[index].strength < getStrongestCard(socket.hand).strength)
+					return;
 				socket.hand.splice(index, 1);
+			}
 			target.hand.push(cards[i]);
-		};
+		}
 		socket.redistributed = true;
 		socket.emit("Game:send_hand", {hand: socket.hand});
 		target.emit("Game:send_hand", {hand: target.hand});
@@ -62,19 +71,26 @@ var Redistributor = function()
 	
 	this.initialise = function(players)
 	{
+		let j;
+		
+		substract = 0;
 		validPlayers = players.filter(function(socket)
 		{
 			return (socket.place != -1);
 		});
+		initialLength = validPlayers.length;
 		validPlayers = sortPlayers();
 		for (let i = 0, len = validPlayers.length; (len - 1) - i > 0; i++) {
 			j = (len - 1) - i;
-			if (i == j || validPlayers[i].place + validPlayers[j].place != len - 1) {
+			if (i == j || validPlayers[i].place + validPlayers[j].place != initialLength - 1) {
 				validPlayers.splice(j, 1);
-				if (j != i)
+				substract++;
+				if (j != i) {
 					validPlayers.splice(i, 1);
+					substract++;
+				}
 				len = validPlayers.length;
-				i = 0;
+				i = -1;
 			}
 		}
 		return (validPlayers.length > 0);
@@ -110,7 +126,7 @@ var Redistributor = function()
 				index = Card.indexOf(validPlayers[i].hand, card);
 				cards.push(validPlayers[i].hand.splice(index, 1)[0]);
 			}
-			transfertCards(validPlayers[i], cards);
+			transfertCards(validPlayers[i], cards, (validPlayers[i].place < len / 2));
 		}
 	}
 	this.updateHands = function(socket, cards)

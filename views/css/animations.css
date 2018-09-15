@@ -1,0 +1,28 @@
+@keyframes activateAnimation {
+	0% {
+		background-color: rgba(0, 0, 0, 0.75);
+		transform: rotateZ(0deg) translateX(-1px);
+	}
+	50% {
+		transform: rotateZ(-1deg) translateX(-1px);
+	}
+	100% {
+		background-color: rgba(100, 50, 50, 0.5);
+		transform: rotateZ(1deg) translateX(-1px);;
+	}
+}
+@keyframes textUp {
+	0% {
+		margin-top: 0%;
+		opacity: 1;
+	}
+	25% {
+		margin-top: 4%;
+		opacity: 1;
+	}
+	100% {
+		opacity: 0;
+		margin-top: 8%;
+		z-index: 1;
+	}
+}

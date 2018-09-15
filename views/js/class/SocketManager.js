@@ -6,6 +6,12 @@ var SocketManager = function(socket, game)
 	var musicPlayer = new MusicPlayer();
 
 	musicPlayer.changeMusic(SYS.Music.PATH + SYS.Music.WAITING_THEME);
+	socket.on("disconnect", function()
+	{
+		chat.writeMessage("", "Connection was lost. All datas were destroyed.", "red");
+		chat.writeMessage("", "Check your connection and refresh this page.", "red");
+		chat.writeMessage("", "The server may also be down.", "red");
+	});
 	var sortCards = function(array)
 	{
 		var cardMin;
@@ -88,7 +94,10 @@ var SocketManager = function(socket, game)
 		}
 		if (datas.nbCards > 0) {
 			game.timer = new Timer();
-			chat.writeImportantMessage("", "Please, give " + datas.nbCards + " card(s) to " + datas.opposite + ".", "pink");
+			if (datas.winner)
+				chat.writeImportantMessage("", "Give " + datas.nbCards + " card(s) of your choice to " + datas.opposite + ".", "pink");
+			else
+				chat.writeImportantMessage("", "Give your " + datas.nbCards + " best card(s) to " + datas.opposite + ".", "pink");
 		}
 		else
 			chat.writeMessage("", "Cards will be redistributed.", "orange");

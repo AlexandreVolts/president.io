@@ -85,7 +85,7 @@ var Room = function(name, password = undefined)
 				round = undefined;
 			}
 			else
-				output.currentPlayer = round.updateCurrentPlayer(-1);
+				output.currentPlayer = round.updateCurrentPlayer(output.indexToRemove);
 		}
 		output.playersNumber = players.length;
 		self.broadcast("Room:leave", output);

@@ -8,10 +8,10 @@ section {
 	text-align: center;
 }
 article {
+	padding: 10px;
 	width: 48%;
 	min-width: 400px;
 	transition: background-color 0.5s;
-	padding: 10px;
 }
 article p {
 	font-size: 20px;
@@ -21,4 +21,30 @@ article form {
 }
 article:hover {
 	background-color: rgba(0, 0, 0, 0.05);
+}
+#advancedOptions {
+	display: flex;
+	flex-direction: column;
+	padding: 10px;
+	height: 0px;
+	opacity: 0;
+	border-radius: 10px;
+	background-color: rgba(0, 0, 0, 0.5);
+	transition: height 0.3s, opacity 0.3s;
+}
+button:hover + #advancedOptions, #advancedOptions:hover {
+	opacity: 1;
+	height: 100px;
+}
+#advancedOptions div {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+input[type="number"] {
+	min-width: 50px;
+	width: 50px;
+}
+input[type="number"]:hover {
+	width: 50px;
 }

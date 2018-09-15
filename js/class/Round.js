@@ -221,9 +221,13 @@ var Round = function(room, players)
 		else
 			computeTurn(socket, cards);
 	}
-	this.updateCurrentPlayer = function(move = 0)
+	this.updateCurrentPlayer = function(index = -1)
 	{
-		currentPlayer += move;
+		if (index >= 0) {
+			if (index < currentPlayer)
+				currentPlayer--;
+			return (currentPlayer);
+		}
 		do {
 			currentPlayer++;
 			if (currentPlayer >= players.length)
