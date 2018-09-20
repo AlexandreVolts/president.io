@@ -1,4 +1,4 @@
-var Card = {
+var CardUtils = {
 	equals: function(card1, card2)
 	{
 		if (card1 == undefined || card2 == undefined)
@@ -13,7 +13,7 @@ var Card = {
 	indexOf: function(array, card)
 	{
 		for (let i = 0, len = array.length; i < len; i++) {
-			if (Card.equals(array[i], card))
+			if (CardUtils.equals(array[i], card))
 				return (i);
 		}
 		return (-1);

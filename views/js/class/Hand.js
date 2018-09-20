@@ -86,7 +86,7 @@ var Hand = function(canvas, soundPlayer)
 	{
 		var ratio = delay.getElapsedTime() / SYS.CLICK_DELAY;
 		var distance = new Vector2D(0, 0);
-		var index = Card.indexOf(self.cards, animatedCard);
+		var index = CardUtils.indexOf(self.cards, animatedCard);
 		var finalPosition;
 
 		if (ratio >= 1) {
@@ -96,7 +96,7 @@ var Hand = function(canvas, soundPlayer)
 		if (index != -1)
 			finalPosition = computePosition(index);
 		else {
-			index = Card.indexOf(middle.selected, animatedCard);
+			index = CardUtils.indexOf(middle.selected, animatedCard);
 			finalPosition = computePosition(index, rect);
 		}
 		distance.x = finalPosition.x - animatedCard.origin.x;
@@ -138,7 +138,7 @@ var Hand = function(canvas, soundPlayer)
 					continue;
 				}
 			}
-			if (Card.equals(self.cards, animatedCard))
+			if (CardUtils.equals(self.cards, animatedCard))
 				continue;
 			cardsTileset.position = position;
 			cardsTileset.draw(ctx, self.cards[i].value, self.cards[i].color);
@@ -162,7 +162,7 @@ var Hand = function(canvas, soundPlayer)
 					continue;
 				}
 			}
-			if (Card.equals(array[i], animatedCard))
+			if (CardUtils.equals(array[i], animatedCard))
 				continue;
 			cardsTileset.position = position;
 			cardsTileset.draw(ctx, array[i].value, array[i].color);

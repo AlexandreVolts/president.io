@@ -27,7 +27,7 @@ var SocketManager = function(server, game)
 		});
 	});
 
-	var getLoginInfos = function(datas, socket)
+	let getLoginInfos = function(datas, socket)
 	{
 		let password = datas.password.length > 1 ? datas.password : undefined;
 		let room = game.getRoom(datas.roomName);
@@ -35,6 +35,8 @@ var SocketManager = function(server, game)
 
 		if (room == undefined)
 			output.message = "Room doesn't exists.";
+		else if (room.isFilled())
+			output.message = "Room is filled.";
 		else if (datas.pseudo.length < 2 || datas.pseudo.length > 15)
 			output.message = "Invalid username length.";
 		else if (password !== room.getPassword())
@@ -51,7 +53,7 @@ var SocketManager = function(server, game)
 		if (output.valid)
 			room.addUser(socket);
 	}
-	var broadcastMessage = function(datas, socket)
+	let broadcastMessage = function(datas, socket)
 	{
 		let room = game.getRoom(socket.room);
 		let output = {
@@ -63,7 +65,7 @@ var SocketManager = function(server, game)
 			return;
 		room.broadcast("Chat:message", output);
 	}
-	var checkCards = function(hand, cards)
+	let checkCards = function(hand, cards)
 	{
 		let output = true;
 		
@@ -75,7 +77,7 @@ var SocketManager = function(server, game)
 		});
 		return (output);
 	}
-	var getSentCards = function(datas, socket)
+	let getSentCards = function(datas, socket)
 	{
 		let room = game.getRoom(socket.room);
 		let round;
@@ -89,7 +91,7 @@ var SocketManager = function(server, game)
 			}
 		}
 	}
-	var onDisconnect = function(socket)
+	let onDisconnect = function(socket)
 	{
 		let name = (socket.pseudo || socket.id);
 		let room = game.getRoom(socket.room);

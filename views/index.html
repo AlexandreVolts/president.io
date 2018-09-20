@@ -21,15 +21,19 @@
 				<form method="post" action="/create">
 					<input type="text" name="name" placeholder="Room name" pattern="[a-zA-Z\d]{2,20}" title="Only letters and digits are supported." required />
 					<input type="password" name="password" placeholder="Password (for privates rooms only)" minlength="2" />
-					<button>Advanced options</button>
+					<button type="button">Advanced options</button>
 					<div id="advancedOptions">
 						<div>
-							<label>Minimum number of players required to start</label>
-							<input type="number" name="minPlayers" value="4" min="3" max="6" />
+							<label>Number of rounds</label>
+							<input type="number" name="rounds" value="5" min="3" max="10" required />
+						</div>
+						<div>
+							<label>Minimum number of players (required to start)</label>
+							<input type="number" name="min" value="4" min="3" max="6" required />
 						</div>
 						<div>
 							<label>Maximum number of players</label>
-							<input type="number" name="maxPlayers" value="8" min="4" max="8" />
+							<input type="number" name="max" value="8" min="4" max="8" required />
 						</div>
 					</div>
 					<input type="submit" value="Create !" />

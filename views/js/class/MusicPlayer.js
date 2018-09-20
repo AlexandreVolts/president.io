@@ -13,7 +13,7 @@ var MusicPlayer = function()
 			window.localStorage.setItem("volume", event.target.value);
 		}
 	});
-	this.changeMusic = function(src)
+	this.change = function(src)
 	{
 		if (sound != undefined)
 			sound.stop();
@@ -36,6 +36,6 @@ var MusicPlayer = function()
 	{
 		var choosenSound = srcArray[Math.floor(Math.random() * srcArray.length)];
 
-		self.changeMusic(folder + choosenSound);
+		self.change(folder + choosenSound);
 	}
 }

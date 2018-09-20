@@ -5,7 +5,7 @@ var SocketManager = function(socket, game)
 	var form = new Form(socket, chat);
 	var musicPlayer = new MusicPlayer();
 
-	musicPlayer.changeMusic(SYS.Music.PATH + SYS.Music.WAITING_THEME);
+	musicPlayer.change(SYS.Music.PATH + SYS.Music.WAITING_THEME);
 	socket.on("disconnect", function()
 	{
 		chat.writeMessage("", "Connection was lost. All datas were destroyed.", "red");
@@ -88,6 +88,7 @@ var SocketManager = function(socket, game)
 	}
 	var manageRedistribution = function(datas)
 	{
+		game.getHand().isPlayerTurn = true;
 		chat.activate(-1);
 		for (var i = 0; i < playersNumber; i++) {
 			chat.getUser(i).showCards(0);
@@ -118,7 +119,7 @@ var SocketManager = function(socket, game)
 		}
 		chat.resize();
 		chat.activate(datas.starter);
-		musicPlayer.changeMusic(SYS.Music.PATH + SYS.Music.IN_GAME_THEME);
+		musicPlayer.change(SYS.Music.PATH + SYS.Music.IN_GAME_THEME);
 	}
 	var updateGame = function(datas)
 	{
@@ -169,6 +170,10 @@ var SocketManager = function(socket, game)
 			game.timer = undefined;
 		}
 	}
+	var manageGameEnd = function(datas)
+	{
+		showScorePanel(datas.datas);
+	}
 	
 	this.getPlayersNumber = function()
 	{
@@ -185,4 +190,5 @@ var SocketManager = function(socket, game)
 	socket.on("Game:reverse", manageRevolution);
 	socket.on("Game:new_turn", manageNewTurn);
 	socket.on("Game:player_end", managePlayerEnd);
+	socket.on("Game:end", manageGameEnd);
 }

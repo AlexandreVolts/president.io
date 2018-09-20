@@ -12,6 +12,7 @@ var Form = function(socket, chat)
 
 	section.removeChild(canvas);
 	section.removeChild(chatContainer);
+	showScorePanel();
 	var getRoomName = function()
 	{
 		const URL_SEPARATOR = "room/";

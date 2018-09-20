@@ -38,7 +38,7 @@ var Deck = function()
 
 		for (let i = 0; i < nbPlayers; i++)
 			output[i] = [];
-		for (let i = 0; cards.length > 0; i++) {
+		for (let i = rand(nbPlayers); cards.length > 0; i++) {
 			card = cards.splice(rand(cards.length), 1)[0];
 			output[i % nbPlayers].push(card);
 		}

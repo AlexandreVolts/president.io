@@ -9,10 +9,12 @@ var Room = function(name, password = undefined)
 	let currentRound = 0;
 	let gameStarted = false;
 	let round;
+	let bounds = {};
 	
 	this.name = name;
+	this.roundsNumber = 5;
 
-	var appendWaiters = function()
+	let appendWaiters = function()
 	{
 		players = players.concat(waiters);
 		waiters.forEach(function(waiter)
@@ -22,13 +24,38 @@ var Room = function(name, password = undefined)
 		});
 		waiters = [];
 	}
+	let prepareSummary = function()
+	{
+		let output = [];
+
+		for (let i = players.length - 1; i >= 0; i--) {
+			output.push({
+				pseudo: players[i].pseudo,
+				place: players[i].place,
+				score: players[i].score
+			});
+		}
+		return (output);
+	}
 	
 	this.startRound = function()
 	{
-		gameStarted = false;
 		appendWaiters();
 		currentRound++;
-		round = new Round(self, players);
+		if (currentRound <= self.roundsNumber)
+			round = new Round(self, players);
+		else {
+			self.broadcast("Game:end", {datas: prepareSummary()});
+			setTimeout(function()
+			{
+				for (let i = players.length - 1; i >= 0; i--) {
+					players[i].score = 0;
+					players[i].place = -1;
+				}
+				round = new Round(self, players);
+				currentRound = 0;
+			}, 10000);
+		}
 		gameStarted = true;
 	}
 	this.broadcast = function(event, datas)
@@ -40,10 +67,10 @@ var Room = function(name, password = undefined)
 			output.index = i;
 			players[i].emit(event, output);
 		}
-		for (let i = 0, wlen = waiters.length; i < wlen; i++) {
+		for (let i = waiters.length - 1; i >= 0; i--) {
 			output.index = len - 1 + i;
 			waiters[i].emit(event, output);
-		};
+		}
 	}
 	this.addUser = function(socket)
 	{
@@ -59,9 +86,10 @@ var Room = function(name, password = undefined)
 			waiters.push(socket);
 		output.playersNumber = players.length;
 		self.broadcast("Room:join", output);
-		if (!gameStarted && players.length >= 4 && waiters.length == 0)
+		if (!gameStarted && players.length >= bounds.min && waiters.length == 0)
 			self.startRound();
 		console.log("User " + socket.pseudo + " has join the room " + self.name + ".");
+		return (true);
 	}
 	this.removeUser = function(socket)
 	{
@@ -91,6 +119,10 @@ var Room = function(name, password = undefined)
 		self.broadcast("Room:leave", output);
 		console.log("User " + socket.pseudo + " leaved the room " + self.name + ".");
 	}
+	this.isFilled = function()
+	{
+		return (players.length + waiters.length >= bounds.max);
+	}
 	this.getFormattedPlayersInfos = function()
 	{
 		let output = [];
@@ -118,6 +150,11 @@ var Room = function(name, password = undefined)
 		if (gameStarted)
 			return (round);
 		return (undefined);
+	}
+	this.setBounds = function(min, max)
+	{
+		bounds.min = min;
+		bounds.max = max;
 	}
 }
 module.exports = Room;

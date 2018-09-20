@@ -26,3 +26,17 @@
 		z-index: 1;
 	}
 }
+@keyframes scorePanel {
+	0% {
+		top: -80%;
+	}
+	20% {
+		top: 0%;
+	}
+	40%, 80% {
+		top: 10%;
+	}
+	100% {
+		top: -80%;
+	}
+}

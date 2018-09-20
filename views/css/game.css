@@ -61,13 +61,13 @@ em {
 	text-align: left;
 }
 footer form {
-	background-color: rgba(0, 0, 0, 0.75);
-	border-radius: 0px 0px 15px 0px;
-	color: white;
-	padding: 10px;
 	position: absolute;
 	top: 0;
 	width: 250px;
+	padding: 10px;
+	background-color: rgba(0, 0, 0, 0.75);
+	color: white;
+	border-radius: 0px 0px 15px 0px;
 	z-index: 5;
 }
 #hiddenHoverButton:hover {
@@ -86,4 +86,22 @@ footer form {
 	text-align: center;
 	z-index: 4;
 	animation: textUp 4s forwards;
+}
+#scorePanel {
+	position: absolute;
+	left: 25%;
+	top: 0;
+	padding: 0px 25px;
+	background-color: rgba(0, 0, 0, 0.75);
+	border-radius: 10px;
+	color: white;
+	z-index: 5;
+	animation: scorePanel 12s forwards;
+}
+#scorePanel div {
+	display: flex;
+	justify-content: space-between;
+}
+#scorePanel h3 {
+	margin-right: 25px;
 }
