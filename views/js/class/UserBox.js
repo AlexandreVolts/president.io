@@ -14,7 +14,7 @@ var UserBox = function(container, pseudo)
 	header.appendChild(score);
 	inner.appendChild(header);
 	inner.appendChild(section);
-	title.textContent = pseudo + " :";
+	title.innerHTML = pseudo + " :";
 	score.textContent = "0pts";
 	container.appendChild(inner);
 	
@@ -31,8 +31,10 @@ var UserBox = function(container, pseudo)
 		for (var i = 0; i < cardsNbr; i++)
 			section.appendChild(cardsBack.cloneNode(true));
 	}
-	this.update = function(newScore)
+	this.update = function(newScore, unset = false)
 	{
+		if (unset)
+			title.innerHTML = pseudo;
 		score.textContent = newScore + " pts";
 	}
 	this.destroy = function()

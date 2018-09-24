@@ -3,7 +3,7 @@ var SocketManager = function(socket, game)
 	var playersNumber = 0;
 	var chat = new Chat(socket);
 	var form = new Form(socket, chat);
-	var musicPlayer = new MusicPlayer();
+	var musicPlayer = new MusicPlayer("musicVolume");
 
 	musicPlayer.change(SYS.Music.PATH + SYS.Music.WAITING_THEME);
 	socket.on("disconnect", function()
@@ -31,34 +31,6 @@ var SocketManager = function(socket, game)
 			array.splice(index, 1);
 		}
 		return (output);
-	}
-	var getSuffix = function(place)
-	{
-		if (place == 1)
-			return ("st");
-		if (place == 2)
-			return ("nd");
-		if (place == 3)
-			return ("rd");
-		return ("th");
-	}
-	var getRole = function(place)
-	{
-		let statut = "";
-
-		if (place <= playersNumber / 2) {
-			for (var i = playersNumber / 2 - (place - 1); i < playersNumber / 2; i++)
-				statut += "vice-";
-			statut += "president";
-		}
-		if (place > playersNumber / 2) {
-			for (var i = place; i < playersNumber; i++)
-				statut += "vice-";
-			statut += "looser";
-		}
-		if (place == playersNumber / 2 + 0.5)
-			statut = "neutral";
-		return (statut);
 	}
 	var manageUserEvents = function(datas)
 	{
@@ -119,7 +91,7 @@ var SocketManager = function(socket, game)
 		}
 		chat.resize();
 		chat.activate(datas.starter);
-		musicPlayer.change(SYS.Music.PATH + SYS.Music.IN_GAME_THEME);
+		musicPlayer.rand(SYS.Music.PATH, SYS.Music.IN_GAME_THEMES);
 	}
 	var updateGame = function(datas)
 	{
@@ -157,11 +129,11 @@ var SocketManager = function(socket, game)
 	}
 	var managePlayerEnd = function(datas)
 	{
-		var suffix = datas.place + getSuffix(datas.place);
+		var suffix = datas.place + Utils.getSuffix(datas.place);
 		var hand = game.getHand();
 
 		chat.getUser(datas.enderIndex).update(datas.score);
-		chat.getUser(datas.enderIndex).setRole(getRole(datas.place));
+		chat.getUser(datas.enderIndex).setRole(Utils.getRole(datas.place, playersNumber));
 		chat.writeMessage(datas.pseudo, " is the " + suffix + " to end !", "lime");
 		chat.resize();
 		if (datas.place >= playersNumber) {
@@ -173,6 +145,8 @@ var SocketManager = function(socket, game)
 	var manageGameEnd = function(datas)
 	{
 		showScorePanel(datas.datas);
+		for (var i = playersNumber - 1; i >= 0; i--)
+			chat.getUser(i).update(0, true);
 	}
 	
 	this.getPlayersNumber = function()

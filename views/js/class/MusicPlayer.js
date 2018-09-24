@@ -1,16 +1,16 @@
-var MusicPlayer = function()
+var MusicPlayer = function(id)
 {
 	var self = this;
 	var soundStorage = [];
 	var sound;
-	var volumeController = document.getElementById("musicVolume");
+	var volumeController = document.getElementById(id);
 
-	volumeController.value = window.localStorage.getItem("volume") || 100;
+	volumeController.value = window.localStorage.getItem(id) || 100;
 	volumeController.addEventListener("change", function(event)
 	{
 		if (sound != undefined) {
 			sound.setVolume(event.target.value / 100);
-			window.localStorage.setItem("volume", event.target.value);
+			window.localStorage.setItem(id, event.target.value);
 		}
 	});
 	this.change = function(src)
@@ -32,7 +32,7 @@ var MusicPlayer = function()
 		sound.setVolume(volumeController.value / 100);
 		sound.play();
 	}
-	this.playRandomMusic = function(folder, srcArray)
+	this.rand = function(folder, srcArray)
 	{
 		var choosenSound = srcArray[Math.floor(Math.random() * srcArray.length)];
 

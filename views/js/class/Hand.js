@@ -57,7 +57,7 @@ var Hand = function(canvas, soundPlayer)
 	var onClickOnCard = function(position)
 	{
 		animatedCard.origin = position;
-		soundPlayer.playRandomMusic(SYS.Fx.PATH, SYS.Fx.CARDS_SOUNDS);
+		soundPlayer.rand(SYS.Fx.PATH, SYS.Fx.CARDS_SOUNDS);
 		delay.restart();
 	}
 	var checkMousePosition = function(pos)

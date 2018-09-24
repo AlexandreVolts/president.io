@@ -39,10 +39,10 @@ var Form = function(socket, chat)
 		document.body.removeChild(header);
 		section.appendChild(chatContainer);
 		section.appendChild(canvas);
-		datas.players.forEach(function(player)
-		{
-			chat.addUser(player.pseudo, player.score);
-		});
+		for (let i = 0, len = datas.players.length; i < len; i++){
+			chat.addUser(datas.players[i].pseudo, datas.players[i].score);
+			chat.getUser(i).setRole(Utils.getRole(datas.players[i].place, len));
+		}
 		socket.index = datas.players.length;
 	}
 	document.getElementsByTagName("h2")[0].textContent = getRoomName();

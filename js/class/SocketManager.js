@@ -44,7 +44,7 @@ var SocketManager = function(server, game)
 		else {
 			output.valid = true;
 			output.players = room.getFormattedPlayersInfos();
-			socket.pseudo = datas.pseudo;
+			socket.pseudo = datas.pseudo.split("<").join("&lt");
 			socket.room = room.name;
 			socket.score = 0;
 			socket.place = -1;

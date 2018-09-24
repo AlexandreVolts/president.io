@@ -130,7 +130,8 @@ var Room = function(name, password = undefined)
 		players.forEach(function(socket) {
 			output.push({
 				pseudo: socket.pseudo,
-				score: socket.score
+				score: socket.score,
+				place: socket.place
 			});
 		});
 		waiters.forEach(function(socket) {

@@ -18,7 +18,7 @@ const SYS = {
 	Music: {
 		PATH: "/assets/musics/",
 		WAITING_THEME: "Casino Calavera.flac",
-		IN_GAME_THEME: "All That.mp3"
+		IN_GAME_THEMES: ["All That.mp3", "MWD - Trouble Scene.mp3", "Reno Project -  Urban.mp3"]
 	},
 	Fx: {
 		PATH: "/assets/fx/",

@@ -3,7 +3,7 @@ var Game = function(canvas, socket)
 	var self = this;
 	var context = canvas.getContext("2d");
 	var socketManager;
-	var soundPlayer = new MusicPlayer();
+	var soundPlayer = new MusicPlayer("soundVolume");
 	var hand = new Hand(canvas, soundPlayer);
 	var button = document.createElement("button");
 	var hidden = document.getElementById("hiddenMiddleButton");
