@@ -1,27 +1,26 @@
-var SocketManager = function(socket, game)
+let SocketManager = function(socket, game)
 {
-	var playersNumber = 0;
-	var chat = new Chat(socket);
-	var form = new Form(socket, chat);
-	var musicPlayer = new MusicPlayer("musicVolume");
+	let playersNumber = 0;
+	let chat = new Chat(socket);
+	let form = new Form(socket, chat);
+	let musicPlayer = new MusicPlayer("musicVolume");
 
 	musicPlayer.change(SYS.Music.PATH + SYS.Music.WAITING_THEME);
 	socket.on("disconnect", function()
 	{
 		chat.writeMessage("", "Connection was lost. All datas were destroyed.", "red");
-		chat.writeMessage("", "Check your connection and refresh this page.", "red");
-		chat.writeMessage("", "The server may also be down.", "red");
+		chat.writeMessage("", "Check your connection and refresh this page. The server may also be down.", "red");
 	});
-	var sortCards = function(array)
+	let sortCards = function(array)
 	{
-		var cardMin;
-		var index;
-		var output = [];
+		let cardMin;
+		let index;
+		let output = [];
 
-		for (var i = 0, len = array.length; i < len; i++) {
+		for (let i = 0, len = array.length; i < len; i++) {
 			cardMin = array[0];
 			index = 0;
-			for (var j = 0, len2 = array.length; j < len2; j++) {
+			for (let j = 0, len2 = array.length; j < len2; j++) {
 				if (array[j].strength < cardMin.strength) {
 					cardMin = array[j];
 					index = j;
@@ -32,10 +31,10 @@ var SocketManager = function(socket, game)
 		}
 		return (output);
 	}
-	var manageUserEvents = function(datas)
+	let manageUserEvents = function(datas)
 	{
-		var action = datas.event == "join" ? " joined" : " left";
-		var waiter = datas.waiter ? "[Spectator] " : "[Player] ";
+		let action = datas.event == "join" ? " joined" : " left";
+		let waiter = datas.waiter ? "[Spectator] " : "[Player] ";
 		
 		playersNumber = datas.playersNumber;
 		chat.writeMessage(waiter + datas.pseudo, action + " the room.");
@@ -49,20 +48,20 @@ var SocketManager = function(socket, game)
 			}
 		}
 	}
-	var manageHand = function(datas)
+	let manageHand = function(datas)
 	{
 		game.getHand().clearSelected();
 		game.setHand(sortCards(datas.hand));
 	}
-	var manageNewMessage = function(datas)
+	let manageNewMessage = function(datas)
 	{
 		chat.writeMessage(datas.pseudo + ":", datas.content.toLowerCase(), "yellow");
 	}
-	var manageRedistribution = function(datas)
+	let manageRedistribution = function(datas)
 	{
 		game.getHand().isPlayerTurn = true;
 		chat.activate(-1);
-		for (var i = 0; i < playersNumber; i++) {
+		for (let i = 0; i < playersNumber; i++) {
 			chat.getUser(i).showCards(0);
 		}
 		if (datas.nbCards > 0) {
@@ -75,9 +74,9 @@ var SocketManager = function(socket, game)
 		else
 			chat.writeMessage("", "Cards will be redistributed.", "orange");
 	}
-	var manageStart = function(datas)
+	let manageStart = function(datas)
 	{
-		var hand = game.getHand();
+		let hand = game.getHand();
 		
 		game.timer = undefined;
 		for (let i = 0, len = datas.cardsNbr.length; i < len; i++)
@@ -93,9 +92,9 @@ var SocketManager = function(socket, game)
 		chat.activate(datas.starter);
 		musicPlayer.rand(SYS.Music.PATH, SYS.Music.IN_GAME_THEMES);
 	}
-	var updateGame = function(datas)
+	let updateGame = function(datas)
 	{
-		var hand = game.getHand();
+		let hand = game.getHand();
 
 		hand.clearSelected();
 		hand.isPlayerTurn = (datas.nextPlayerId == datas.index);
@@ -112,25 +111,27 @@ var SocketManager = function(socket, game)
 		chat.activate(datas.nextPlayerId);
 		chat.getUser(datas.currentPlayer).showCards(datas.handLength);
 	}
-	var manageRevolution = function(datas)
+	let manageRevolution = function(datas)
 	{
 		game.getHand().revolution = datas.isRevolution;
 		chat.writeImportantMessage("", "REVOLUTION !", "red");
 	}
-	var manageNewTurn = function(datas)
+	let manageNewTurn = function(datas)
 	{
-		var hand = game.getHand();
+		let hand = game.getHand();
 		
 		hand.isPlayerTurn = (datas.currentPlayer == datas.index);
+		if (hand.isPlayerTurn)
+			game.timer = new Timer();
 		hand.clearSelected();
 		hand.getMiddle().clear();
 		chat.activate(datas.currentPlayer);
 		chat.writeMessage(datas.pseudo, " won the turn !", "cyan");
 	}
-	var managePlayerEnd = function(datas)
+	let managePlayerEnd = function(datas)
 	{
-		var suffix = datas.place + Utils.getSuffix(datas.place);
-		var hand = game.getHand();
+		let suffix = datas.place + Utils.getSuffix(datas.place);
+		let hand = game.getHand();
 
 		chat.getUser(datas.enderIndex).update(datas.score);
 		chat.getUser(datas.enderIndex).setRole(Utils.getRole(datas.place, playersNumber));
@@ -142,10 +143,10 @@ var SocketManager = function(socket, game)
 			game.timer = undefined;
 		}
 	}
-	var manageGameEnd = function(datas)
+	let manageGameEnd = function(datas)
 	{
 		showScorePanel(datas.datas);
-		for (var i = playersNumber - 1; i >= 0; i--)
+		for (let i = playersNumber - 1; i >= 0; i--)
 			chat.getUser(i).update(0, true);
 	}
 	

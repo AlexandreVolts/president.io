@@ -4,6 +4,8 @@ var Utils =
 	{
 		let status = "";
 
+		if (place < 0)
+			return (status);
 		if (place <= len / 2) {
 			for (var i = len / 2 - (place - 1); i < len / 2; i++)
 				status += "vice-";

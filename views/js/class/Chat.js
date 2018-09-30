@@ -1,17 +1,17 @@
-var Chat = function(socket)
+let Chat = function(socket)
 {
-	var self = this;
-	var container = document.getElementById("chat");
-	var textBox = document.getElementById("textBox");
-	var chatHeader = document.getElementById("chatHeader");
-	var chatInput = document.getElementById("chatInput");
-	var visualText = document.createElement("h2");
-	var users = [];
-	var id = 0;
+	let self = this;
+	let container = document.getElementById("chat");
+	let textBox = document.getElementById("textBox");
+	let chatHeader = document.getElementById("chatHeader");
+	let chatInput = document.getElementById("chatInput");
+	let visualText = document.createElement("h2");
+	let users = [];
+	let id = 0;
 	
 	visualText.id = "visualText";
 	container.appendChild(visualText);
-	var sendMessage = function(event)
+	let sendMessage = function(event)
 	{
 		if (event.key == "Enter" || event.code == "Enter" || event.which == 13) {
 			if (chatInput.value.length >= 2) {
@@ -52,8 +52,8 @@ var Chat = function(socket)
 	}
 	this.writeMessage = function(pseudo, message, color = "white")
 	{
-		var p = document.createElement("p");
-		var content = "<strong>" + pseudo + "</strong> " + message;
+		let p = document.createElement("p");
+		let content = "<strong>" + pseudo + "</strong> " + message;
 
 		p.style.color = color;
 		p.innerHTML = content;

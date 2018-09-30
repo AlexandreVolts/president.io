@@ -23,6 +23,10 @@ var Server = function(port)
 		{
 			res.sendFile(path.resolve(DIR + "index.html"));
 		});
+		app.get("/rules", function(req, res)
+		{
+			res.sendFile(path.resolve(DIR + "rules.html"));
+		});
 		app.get("/room/:name", manageUserInRoom);
 		app.post("/create", manageRoomCreation);
 		app.post("/join", manageUserJoin);

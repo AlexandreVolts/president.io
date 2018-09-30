@@ -25,7 +25,7 @@ var Round = function(room, players)
 		let broadcastOutput = {};
 		
 		deck.generate();
-		deck.addJokers(0);
+		deck.addJokers(2);
 		hands = deck.distribute(players.length);
 		broadcastOutput.cardsNbr = new Array(players.length);
 		for (let i = 0, l = hands.length; i < l; i++) {
@@ -135,17 +135,15 @@ var Round = function(room, players)
 	{
 		if (players[currentPlayer].id !== socket.id)
 			return (false);
+		Card.updateJoker(cards, revolution);
 		if (cards.length > 0) {
 			if (!checkPattern(cards))
 				return (false);
 			passed = 0;
 			playedCards = cards;
 		}
-		else {
-			if (pattern == undefined)
-				return (false);
+		else
 			passed++;
-		}
 		changeTurn(socket, cards);
 		if (enders >= players.length - 1)
 			return (true);

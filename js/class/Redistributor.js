@@ -10,8 +10,8 @@ var Redistributor = function()
 	let computeNbCards = function(index)
 	{
 		if (index < validPlayers.length / 2)
-			return (Math.floor(validPlayers.length / 2) - index);
-		return ((index + 1) - Math.floor(validPlayers.length / 2));
+			return (~~(validPlayers.length / 2) - index);
+		return ((index + 1) - ~~(validPlayers.length / 2));
 	}
 	let sortPlayers = function()
 	{
@@ -103,9 +103,9 @@ var Redistributor = function()
 			validPlayers[i].redistributed = false;
 			output.winner = (i < len / 2);
 			if (i < len / 2)
-				output.nbCards = Math.floor(len / 2) - i;
+				output.nbCards = ~~(len / 2) - i;
 			else
-				output.nbCards = (i + 1) - Math.floor(len / 2);
+				output.nbCards = (i + 1) - ~~(len / 2);
 			output.opposite = validPlayers[(len - 1) - i].pseudo;
 			validPlayers[i].emit("Game:redistribute", output);
 		}
@@ -133,8 +133,9 @@ var Redistributor = function()
 	{
 		let nbCards;
 		let len = validPlayers.length;
+		let index = validPlayers.indexOf(socket);
 		
-		if (socket.redistributed || cards.length != computeNbCards(socket.place))
+		if (socket.redistributed || cards.length != computeNbCards(index))
 			return;
 		transfertCards(socket, cards, (socket.place < len / 2));
 	}

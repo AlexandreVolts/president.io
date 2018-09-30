@@ -117,7 +117,8 @@ var Hand = function(canvas, soundPlayer)
 		if (self.revolution && currentCards.length > 1)
 			cardId = currentCards.length - 2;
 		if ((!self.revolution && currentCards[cardId].strength < strength)
-			|| (self.revolution && currentCards[cardId].strength > strength))
+			|| (self.revolution && currentCards[cardId].strength > strength)
+			|| currentCards[cardId].strength == 13)
 			shade.draw(ctx);
 	}
 	var drawHandCards = function(ctx)
