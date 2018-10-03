@@ -24,8 +24,12 @@ var Round = function(room, players)
 		let output = {};
 		let broadcastOutput = {};
 		
-		deck.generate();
-		deck.addJokers(2);
+		for (let i = 0; i < room.decksNumber; i++) {
+			if (i > 0 && players.length < 5)
+				break;
+			deck.generate();
+			deck.addJokers(room.jokersNumber);
+		}
 		hands = deck.distribute(players.length);
 		broadcastOutput.cardsNbr = new Array(players.length);
 		for (let i = 0, l = hands.length; i < l; i++) {
@@ -34,18 +38,7 @@ var Round = function(room, players)
 			broadcastOutput.cardsNbr[i] = hands[i].length;
 			players[i].emit("Game:send_hand", output);
 		}
-		if (!redistributor.initialise(players)) {
-			start(broadcastOutput);
-		}
-		else {
-			isRedistributionActive = true;
-			room.broadcast("Game:redistribute", {nbCards: 0});
-			redistributor.prepare();
-			timeout = setTimeout(function() {
-				redistributor.force();
-				start(broadcastOutput);
-			}, 1000 * DELAY);
-		}
+		redistribute();
 	}
 	let reset = function()
 	{
@@ -60,7 +53,7 @@ var Round = function(room, players)
 	}
 	let start = function(output)
 	{
-		let index = Math.floor(Math.random() * players.length);
+		let index = ~~(Math.random() * players.length);
 		let max = -1;
 		
 		isRedistributionActive = false;
@@ -75,6 +68,21 @@ var Round = function(room, players)
 		output.starter = currentPlayer;
 		output.starterPseudo = players[currentPlayer].pseudo;
 		room.broadcast("Game:round_start", output);
+	}
+	let redistribute = function()
+	{
+		if (!redistributor.initialise(players)) {
+			start(broadcastOutput);
+		}
+		else {
+			isRedistributionActive = true;
+			room.broadcast("Game:redistribute", {nbCards: 0});
+			redistributor.prepare();
+			timeout = setTimeout(function() {
+				redistributor.force();
+				start(broadcastOutput);
+			}, 1000 * DELAY);
+		}
 	}
 	let reverseCardOrder = function()
 	{
@@ -135,7 +143,7 @@ var Round = function(room, players)
 	{
 		if (players[currentPlayer].id !== socket.id)
 			return (false);
-		Card.updateJoker(cards, revolution);
+		Card.updateJokerValue(cards, revolution);
 		if (cards.length > 0) {
 			if (!checkPattern(cards))
 				return (false);
@@ -177,8 +185,8 @@ var Round = function(room, players)
 		});
 		changeCurrentPlayer(socket, cards);
 		if (cards.length > 0) {
-			if ((cards[cards.length - 1].strength == 12 && !revolution) 
-				|| (cards[0].strength == 0 && revolution)) {
+			if ((cards[cards.length - 1].strength >= 12 && !revolution) 
+				|| (cards[0].strength <= 0 && revolution)) {
 				tmp = currentPlayer;
 				currentPlayer = save;
 				reset();

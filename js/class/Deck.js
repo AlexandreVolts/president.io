@@ -6,7 +6,7 @@ const COLORS = ["Spade", "Club", "Diamond", "Heart"];
 
 function rand(max)
 {
-	return (Math.floor(Math.random() * max));
+	return (~~(Math.random() * max));
 }
 
 var Deck = function()

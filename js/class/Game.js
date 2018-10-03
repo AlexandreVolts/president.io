@@ -15,6 +15,7 @@ var Game = function()
 		params.min = parseInt(params.min);
 		params.max = parseInt(params.max);
 		params.rounds = parseInt(params.rounds);
+		params.jokers = parseInt(params.jokers);
 		return (true);
 	}
 	
@@ -24,6 +25,7 @@ var Game = function()
 		let name;
 		let password;
 		let index;
+		let room;
 
 		if (!isFormFilled(params))
 			return (false);
@@ -33,16 +35,22 @@ var Game = function()
 			return (false);
 		if (params.rounds < 3 || params.rounds > 10)
 			return (false);
+		if (params.jokers < 0 || params.jokers > 3)
+			return (false);
 		if (roomNamePattern.test(params.name))
 			return (false);
+		console.log(params.decks);
 		index = rooms.findIndex(function(room)
 		{
 			return (room.name === params.name);
 		});
 		if (index == -1 && name != undefined) {
-			rooms.push(new Room(params.name, password));
-			rooms[rooms.length - 1].setBounds(params.min, params.max);
-			rooms[rooms.length - 1].roundsNumber = params.rounds;
+			room = new Room(params.name, password);
+			rooms.push(room);
+			room.setBounds(params.min, params.max);
+			room.roundsNumber = params.rounds;
+			room.jokersNumber = params.jokers;
+			room.decksNumber = params.decks == "on" ? 2 : 1;
 			console.log("A new room named " + name + " has been created");
 			return (true);
 		}
@@ -67,7 +75,7 @@ var Game = function()
 
 		if (publicRooms.length == 0)
 			return (undefined);
-		return (publicRooms[Math.floor(Math.random() * publicRooms.length)].name);
+		return (publicRooms[~~(Math.random() * publicRooms.length)].name);
 	}
 	this.getRoom = function(name)
 	{

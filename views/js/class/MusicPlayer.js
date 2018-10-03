@@ -34,7 +34,7 @@ var MusicPlayer = function(id)
 	}
 	this.rand = function(folder, srcArray)
 	{
-		var choosenSound = srcArray[Math.floor(Math.random() * srcArray.length)];
+		var choosenSound = srcArray[~~(Math.random() * srcArray.length)];
 
 		self.change(folder + choosenSound);
 	}

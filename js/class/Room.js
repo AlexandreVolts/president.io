@@ -13,6 +13,8 @@ var Room = function(name, password = undefined)
 	
 	this.name = name;
 	this.roundsNumber = 5;
+	this.jokersNumber = 2;
+	this.decksNumber = 1;
 
 	let appendWaiters = function()
 	{

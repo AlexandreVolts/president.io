@@ -4,7 +4,7 @@ var Timer = function()
 
 	this.draw = function(ctx, width)
 	{
-		var time = Math.floor(clock.getElapsedTime());
+		var time = ~~(clock.getElapsedTime());
 		var text = (30 - time) + " s";
 		var position = new Vector2D(0, SYS.PADDING * 4);
 

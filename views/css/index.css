@@ -24,31 +24,37 @@ article:hover {
 }
 #advancedOptions {
 	position: absolute;
-	margin-top: -30px;
+	margin-top: -90px;
 	display: flex;
 	flex-direction: column;
-	width: 25%;
 	height: 0px;
 	opacity: 0;
 	border-radius: 10px;
 	background-color: rgba(0, 0, 0, 0.5);
 	transition: height 0.4s, opacity 0.4s;
 }
-button:hover + #advancedOptions, #advancedOptions:hover, 
-#advancedOptions input:focus + #advancedOptions {
-	padding: 10px;
+button:hover + #advancedOptions, #advancedOptions:hover {
+	padding: 10px 30px;
 	opacity: 1;
-	height: 100px;
+	height: 160px;
+}
+#advancedOptions label {
+	margin-right: 100px;
 }
 button:hover + #advancedOptions div, 
-#advancedOptions:hover div,
-#advancedOptions input:focus + #advancedOptions div{
+#advancedOptions:hover div {
 	display: flex;
 }
 #advancedOptions div {
 	display: none;
 	justify-content: space-between;
 	align-items: center;
+}
+input[type="checkbox"] {
+	display: inline;
+	min-width: auto;
+	width: auto;
+	transform: scale(1.2);
 }
 input[type="number"] {
 	min-width: 50px;

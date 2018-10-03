@@ -40,7 +40,7 @@ function showScorePanel(datas = undefined)
 		score = document.createElement("h4");
 		pseudo.innerHTML = datas[i].pseudo;
 		score.textContent = datas[i].score + " pts";
-		inner.style.color = "rgb(255, " + Math.floor(255 * (i / (datas.length - 1))) + ", 0)";
+		inner.style.color = "rgb(255, " + ~~(255 * (i / (datas.length - 1))) + ", 0)";
 		inner.appendChild(pseudo);
 		inner.appendChild(score);
 		scorePanel.appendChild(inner);

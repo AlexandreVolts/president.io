@@ -9,6 +9,10 @@ canvas {
 em {
 	color: yellow;
 }
+#loginError {
+	text-align: center;
+	color: white;
+}
 #middleButton, #hiddenMiddleButton {
 	position: absolute;
 	height: 50px;

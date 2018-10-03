@@ -1,17 +1,17 @@
 const CARDS_PATH = SYS.IMG_PATH + SYS.CARDS_TILESET_NAME;
 
-var Hand = function(canvas, soundPlayer)
+let Hand = function(canvas, soundPlayer)
 {
-	var self = this;
-	var cardsTileset = new Tileset(CARDS_PATH, SYS.CARDS_COL_NBR, SYS.CARDS_ROW_NBR);
-	var cardSize = cardsTileset.getTileSize();
-	var mousePosition = new Vector2D(0, 0);
-	var mouseClicked = false;
-	var delay = new Clock();
-	var animatedCard;
-	var rightPadding;
-	var middle;
-	var shade;
+	let self = this;
+	let cardsTileset = new Tileset(CARDS_PATH, SYS.CARDS_COL_NBR, SYS.CARDS_ROW_NBR);
+	let cardSize = cardsTileset.getTileSize();
+	let mousePosition = new Vector2D(0, 0);
+	let mouseClicked = false;
+	let delay = new Clock();
+	let animatedCard;
+	let rightPadding;
+	let middle;
+	let shade;
 	
 	this.revolution = false;
 	this.isPlayerTurn = false;
@@ -23,9 +23,9 @@ var Hand = function(canvas, soundPlayer)
 	shade = new ShadeTransition(cardSize.x, cardSize.y);
 	cardsTileset.setTileSize(cardSize);
 
-	var computePosition = function(index, rect = undefined)
+	let computePosition = function(index, rect = undefined)
 	{
-		var output = new Vector2D(0, 0);
+		let output = new Vector2D(0, 0);
 		
 		if (rect == undefined) {
 			output.x = SYS.PADDING + (rightPadding / self.cards.length) * index;
@@ -37,30 +37,30 @@ var Hand = function(canvas, soundPlayer)
 		}
 		return (output);
 	}
-	var manageMouseClick = function(event)
+	let manageMouseClick = function(event)
 	{
 		mousePosition.x = event.clientX;
 		mousePosition.y = event.clientY;
 		mouseClicked = event.type === "mousedown";
 	}
-	var manageMouseMove = function(event)
+	let manageMouseMove = function(event)
 	{
 		mousePosition.x = event.clientX;
 		mousePosition.y = event.clientY;
 	}
-	var manageTouch = function(event)
+	let manageTouch = function(event)
 	{
 		mousePosition.x = event.changedTouches[0].pageX;
 		mousePosition.y = event.changedTouches[0].pageY;
 		mouseClicked = event.type === "touchstart";
 	}
-	var onClickOnCard = function(position)
+	let onClickOnCard = function(position)
 	{
 		animatedCard.origin = position;
 		soundPlayer.rand(SYS.Fx.PATH, SYS.Fx.CARDS_SOUNDS);
 		delay.restart();
 	}
-	var checkMousePosition = function(pos)
+	let checkMousePosition = function(pos)
 	{
 		if (mousePosition.x >= pos.x && mousePosition.y >= pos.y
 			&& mousePosition.x <= pos.x + cardSize.x 
@@ -68,26 +68,29 @@ var Hand = function(canvas, soundPlayer)
 			return (true);
 		return (false);
 	}
-	var pushCards = function(adder, substractor, index, additionalConditions = true)
+	let pushCards = function(adder, substractor, index, additionalConditions = true)
 	{
-		var time = delay.getElapsedTime();
-		var i = 0;
+		let time = delay.getElapsedTime();
+		let i = 0;
 
 		if (time > SYS.CLICK_DELAY && additionalConditions) {
 			animatedCard = substractor.splice(index, 1)[0];
-			for (; i < adder.length && animatedCard.strength > adder[i].strength; i++);
+			for (let len = adder.length; i < len; i++) {
+				if (animatedCard.strength < adder[i].strength && adder[i].strength != 13)
+					break;
+			}
 			adder.splice(i, 0, animatedCard);
 			mouseClicked = false;
 			return (true);
 		}
 		return (false);
 	}
-	var drawAnimatedCard = function(ctx, rect)
+	let drawAnimatedCard = function(ctx, rect)
 	{
-		var ratio = delay.getElapsedTime() / SYS.CLICK_DELAY;
-		var distance = new Vector2D(0, 0);
-		var index = CardUtils.indexOf(self.cards, animatedCard);
-		var finalPosition;
+		let ratio = delay.getElapsedTime() / SYS.CLICK_DELAY;
+		let distance = new Vector2D(0, 0);
+		let index = CardUtils.indexOf(self.cards, animatedCard);
+		let finalPosition;
 
 		if (ratio >= 1) {
 			animatedCard = undefined;
@@ -105,29 +108,26 @@ var Hand = function(canvas, soundPlayer)
 		cardsTileset.position.y = animatedCard.origin.y + distance.y * ratio;
 		cardsTileset.draw(ctx, animatedCard.value, animatedCard.color);
 	}
-	var drawHelper = function(ctx, strength)
+	let drawHelper = function(ctx, strength)
 	{
-		var currentCards = middle.getCurrentCards();
-		var cardId = 0;
+		let currentCards = middle.getCurrentCards();
 		
 		if (currentCards.length == 0) {
 			shade.draw(ctx);
 			return;
 		}
-		if (self.revolution && currentCards.length > 1)
-			cardId = currentCards.length - 2;
-		if ((!self.revolution && currentCards[cardId].strength < strength)
-			|| (self.revolution && currentCards[cardId].strength > strength)
-			|| currentCards[cardId].strength == 13)
+		if ((!self.revolution && currentCards[0].strength < strength)
+			|| (self.revolution && currentCards[0].strength > strength)
+			|| strength == 13)
 			shade.draw(ctx);
 	}
-	var drawHandCards = function(ctx)
+	let drawHandCards = function(ctx)
 	{
-		var position;
-		var next;
-		var additionalCondition;
+		let position;
+		let next;
+		let additionalCondition;
 		
-		for (var i = 0; i < self.cards.length; i++) {
+		for (let i = 0; i < self.cards.length; i++) {
 			position = computePosition(i);
 			shade.position = position;
 			next = computePosition(i + 1)
@@ -147,14 +147,14 @@ var Hand = function(canvas, soundPlayer)
 				drawHelper(ctx, self.cards[i].strength);
 		}
 	}
-	var drawCardsOnMiddle = function(array, ctx, rect, isSelectedArray = false)
+	let drawCardsOnMiddle = function(array, ctx, rect, isSelectedArray = false)
 	{
-		var position;
-		var time = delay.getElapsedTime();
+		let position;
+		let time = delay.getElapsedTime();
 
 		if (!middle.allowDraw())
 			return;
-		for (var i = 0; i < array.length; i++) {
+		for (let i = 0; i < array.length; i++) {
 			position = computePosition(i, rect);
 			if (checkMousePosition(position)) {
 				position.y -= SYS.PADDING / 2;
@@ -172,12 +172,12 @@ var Hand = function(canvas, soundPlayer)
 	
 	this.clearSelected = function()
 	{
-		for (var i = 0, len = middle.selected.length; i < len; i++)
+		for (let i = 0, len = middle.selected.length; i < len; i++)
 			pushCards(self.cards, middle.selected, 0);
 	}
 	this.render = function(ctx)
 	{
-		var rect = middle.getRect();
+		let rect = middle.getRect();
 		
 		rightPadding = (canvas.width - cardSize.x / 2);
 		middle.render(ctx, cardsTileset);
