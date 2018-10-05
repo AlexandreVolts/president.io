@@ -8,6 +8,7 @@ section {
 	text-align: center;
 }
 article {
+	margin-bottom: 50px;
 	padding: 10px;
 	width: 48%;
 	min-width: 400px;

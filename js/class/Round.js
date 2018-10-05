@@ -38,7 +38,7 @@ var Round = function(room, players)
 			broadcastOutput.cardsNbr[i] = hands[i].length;
 			players[i].emit("Game:send_hand", output);
 		}
-		redistribute();
+		redistribute(broadcastOutput);
 	}
 	let reset = function()
 	{
@@ -69,7 +69,7 @@ var Round = function(room, players)
 		output.starterPseudo = players[currentPlayer].pseudo;
 		room.broadcast("Game:round_start", output);
 	}
-	let redistribute = function()
+	let redistribute = function(broadcastOutput)
 	{
 		if (!redistributor.initialise(players)) {
 			start(broadcastOutput);

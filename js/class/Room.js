@@ -18,13 +18,18 @@ var Room = function(name, password = undefined)
 
 	let appendWaiters = function()
 	{
-		players = players.concat(waiters);
-		waiters.forEach(function(waiter)
+		waiters.forEach(function(waiter, i)
 		{
+			waiter.emit("Room:leave",
+			{
+				indexToRemove: players.length + i,
+				pseudo: waiter.pseudo,
+				event: "leave",
+				waiter: true,
+			});
 			self.removeUser(waiter);
 			self.addUser(waiter);
 		});
-		waiters = [];
 	}
 	let prepareSummary = function()
 	{
@@ -42,7 +47,11 @@ var Room = function(name, password = undefined)
 	
 	this.startRound = function()
 	{
-		appendWaiters();
+		if (gameStarted && waiters.length > 0) {
+			appendWaiters();
+			gameStarted = false;
+			return;
+		}
 		currentRound++;
 		if (currentRound <= self.roundsNumber)
 			round = new Round(self, players);
@@ -150,9 +159,7 @@ var Room = function(name, password = undefined)
 	}
 	this.getRound = function()
 	{
-		if (gameStarted)
-			return (round);
-		return (undefined);
+		return (round);
 	}
 	this.setBounds = function(min, max)
 	{

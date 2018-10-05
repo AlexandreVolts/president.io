@@ -39,7 +39,6 @@ var Game = function()
 			return (false);
 		if (roomNamePattern.test(params.name))
 			return (false);
-		console.log(params.decks);
 		index = rooms.findIndex(function(room)
 		{
 			return (room.name === params.name);
